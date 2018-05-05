@@ -3,7 +3,7 @@
 """ Utility for uploading the package to PyPi.
 
 - MIT Licensed, (C) 2018 Lilian Besson (Naereen)
-  https://GitHub.com/Naereen/Kullback-Leibler_divergences_and_kl-UCB_indexes
+  https://GitHub.com/Naereen/Kullback-Leibler-divergences-and-kl-UCB-indexes
 """
 
 __author__ = "Lilian Besson (Naereen)"
@@ -32,7 +32,7 @@ setup(name='kullback_leibler',
     description='Fast implementation of various Kullback-Leibler divergences for 1D and 2D parametric distributions. Also provides optimized code for kl-UCB indexes',
     long_description=long_description,
     license='OSI Approved :: MIT License',
-    url="https://github.com/Naereen/Kullback-Leibler_divergences_and_kl-UCB_indexes"
+    url="https://github.com/Naereen/Kullback-Leibler-divergences-and-kl-UCB-indexes"
     classifiers=[
         'Intended Audience :: Science/Research',
         'License :: OSI Approved :: MIT License',

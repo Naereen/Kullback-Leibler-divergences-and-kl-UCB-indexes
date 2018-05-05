@@ -103,7 +103,7 @@ Documentation
 ~~~~~~~~~~~~~
 
 See `this
-file <https://naereen.github.io/Kullback-Leibler_divergences_and_kl-UCB_indexes/doc/index.html>`__.
+file <https://naereen.github.io/Kullback-Leibler-divergences-and-kl-UCB-indexes/doc/index.html>`__.
 
 FIXME
 
@@ -168,7 +168,7 @@ Demo on a `Jupyter notebook <https://www.Jupyter.org/>`__
 ---------------------------------------------------------
 
 See this notebook: `on
-nbviewever <https://nbviewer.jupyter.org/github/Naereen/Kullback-Leibler_divergences_and_kl-UCB_indexes/blob/master/Kullback-Leibler_divergences_in_native_Python__Cython_and_Numba.ipynb>`__,
+nbviewever <https://nbviewer.jupyter.org/github/Naereen/Kullback-Leibler-divergences-and-kl-UCB-indexes/blob/master/Kullback-Leibler_divergences_in_native_Python__Cython_and_Numba.ipynb>`__,
 which also compares with the `Julia
 version <https://github.com/Naereen/KullbackLeibler.jl>`__.
 
@@ -191,8 +191,8 @@ compile, test, and if it works, install it.
 .. code:: bash
 
     cd /tmp/
-    git clone https://GitHub.com/Naereen/Kullback-Leibler_divergences_and_kl-UCB_indexes
-    cd Kullback-Leibler_divergences_and_kl-UCB_indexes/src/
+    git clone https://GitHub.com/Naereen/Kullback-Leibler-divergences-and-kl-UCB-indexes
+    cd Kullback-Leibler-divergences-and-kl-UCB-indexes/src/
     make build
     make test     # should pass
     make install  # mv the build/lib*/*.so files where you need them
@@ -226,10 +226,10 @@ Julia implementation ?
 ----------------------
 
 `I was
-curious <https://github.com/Naereen/Kullback-Leibler_divergences_and_kl-UCB_indexes/issues/1>`__
+curious <https://github.com/Naereen/Kullback-Leibler-divergences-and-kl-UCB-indexes/issues/1>`__
 and wanted to write the same algorithm in
 `Julia <http://julialang.org>`__. Here it is:
-`kullback_leibler.jl <https://github.com/Naereen/Kullback-Leibler_divergences_and_kl-UCB_indexes/blob/master/src/kullback_leibler.jl>`__.
+`kullback_leibler.jl <https://github.com/Naereen/Kullback-Leibler-divergences-and-kl-UCB-indexes/blob/master/src/kullback_leibler.jl>`__.
 
 The Julia package is published here:
 `Naereen/LempelZiv.jl <https://github.com/Naereen/LempelZiv.jl>`__, and
@@ -272,14 +272,14 @@ Besson <https://GitHub.com/Naereen>`__, 2018.
    :target: https://pypi.org/project/kullback_leibler/
 .. |PyPI implementation| image:: https://img.shields.io/pypi/implementation/kullback_leibler.svg
 .. |PyPI pyversions| image:: https://img.shields.io/pypi/pyversions/kullback_leibler.svg
-.. |GitHub license| image:: https://img.shields.io/github/license/Naereen/Kullback-Leibler_divergences_and_kl-UCB_indexes.svg
+.. |GitHub license| image:: https://img.shields.io/github/license/Naereen/Kullback-Leibler-divergences-and-kl-UCB-indexes.svg
    :target: https://github.com/Naereen/badges/blob/master/LICENSE
 .. |Maintenance| image:: https://img.shields.io/badge/Maintained%3F-yes-green.svg
-   :target: https://GitHub.com/Naereen/Kullback-Leibler_divergences_and_kl-UCB_indexes/graphs/commit-activity
+   :target: https://GitHub.com/Naereen/Kullback-Leibler-divergences-and-kl-UCB-indexes/graphs/commit-activity
 .. |Ask Me Anything !| image:: https://img.shields.io/badge/Ask%20me-anything-1abc9c.svg
    :target: https://GitHub.com/Naereen/ama
-.. |Analytics| image:: https://ga-beacon.appspot.com/UA-38514290-17/github.com/Naereen/Kullback-Leibler_divergences_and_kl-UCB_indexes/README.md?pixel
-   :target: https://GitHub.com/Naereen/Kullback-Leibler_divergences_and_kl-UCB_indexes/
+.. |Analytics| image:: https://ga-beacon.appspot.com/UA-38514290-17/github.com/Naereen/Kullback-Leibler-divergences-and-kl-UCB-indexes/README.md?pixel
+   :target: https://GitHub.com/Naereen/Kullback-Leibler-divergences-and-kl-UCB-indexes/
 .. |ForTheBadge uses-badges| image:: http://ForTheBadge.com/images/badges/uses-badges.svg
    :target: http://ForTheBadge.com
 .. |ForTheBadge uses-git| image:: http://ForTheBadge.com/images/badges/uses-git.svg

@@ -63,7 +63,7 @@ array([2.42, 0.02, 1.62])
 ```
 
 ### Documentation
-See [this file](https://naereen.github.io/Kullback-Leibler_divergences_and_kl-UCB_indexes/doc/index.html).
+See [this file](https://naereen.github.io/Kullback-Leibler-divergences-and-kl-UCB-indexes/doc/index.html).
 
 FIXME
 
@@ -116,7 +116,7 @@ And for kl-UCB indexes, for instance:
 The speedup is typically between ×50 and ×100.
 
 ## Demo on a [Jupyter notebook](https://www.Jupyter.org/)
-See this notebook: [on nbviewever](https://nbviewer.jupyter.org/github/Naereen/Kullback-Leibler_divergences_and_kl-UCB_indexes/blob/master/Kullback-Leibler_divergences_in_native_Python__Cython_and_Numba.ipynb), which also compares with the [Julia version](https://github.com/Naereen/KullbackLeibler.jl).
+See this notebook: [on nbviewever](https://nbviewer.jupyter.org/github/Naereen/Kullback-Leibler-divergences-and-kl-UCB-indexes/blob/master/Kullback-Leibler_divergences_in_native_Python__Cython_and_Numba.ipynb), which also compares with the [Julia version](https://github.com/Naereen/KullbackLeibler.jl).
 
 FIXME write the julia version!
 
@@ -130,8 +130,8 @@ Otherwise, you will have to clone this repository, go in the folder, compile, te
 
 ```bash
 cd /tmp/
-git clone https://GitHub.com/Naereen/Kullback-Leibler_divergences_and_kl-UCB_indexes
-cd Kullback-Leibler_divergences_and_kl-UCB_indexes/src/
+git clone https://GitHub.com/Naereen/Kullback-Leibler-divergences-and-kl-UCB-indexes
+cd Kullback-Leibler-divergences-and-kl-UCB-indexes/src/
 make build
 make test     # should pass
 make install  # mv the build/lib*/*.so files where you need them
@@ -157,8 +157,8 @@ python -c "from kullback_leibler import klBern; print(round(klBern(0.1,0.5), 4) 
 ----
 
 ## Julia implementation ?
-[I was curious](https://github.com/Naereen/Kullback-Leibler_divergences_and_kl-UCB_indexes/issues/1) and wanted to write the same algorithm in [Julia](http://julialang.org).
-Here it is: [kullback_leibler.jl](https://github.com/Naereen/Kullback-Leibler_divergences_and_kl-UCB_indexes/blob/master/src/kullback_leibler.jl).
+[I was curious](https://github.com/Naereen/Kullback-Leibler-divergences-and-kl-UCB-indexes/issues/1) and wanted to write the same algorithm in [Julia](http://julialang.org).
+Here it is: [kullback_leibler.jl](https://github.com/Naereen/Kullback-Leibler-divergences-and-kl-UCB-indexes/blob/master/src/kullback_leibler.jl).
 
 The Julia package is published here: [Naereen/LempelZiv.jl](https://github.com/Naereen/LempelZiv.jl),
 and see [here for its documentation](https://naereen.github.io/LempelZiv.jl/doc/index.html).
@@ -173,13 +173,13 @@ Python v2.7+ or Python v3.4+.
 - [Cython](http://cython.org/) is *needed* to build the C extension (faster) (in `kullback_leibler_cython.py`).
 - For both the Cython and the C versions, a working version of [gcc](https://gcc.gnu.org/) is required (probably version >= 6.0).
 
-### :scroll: License ? [![GitHub license](https://img.shields.io/github/license/Naereen/Kullback-Leibler_divergences_and_kl-UCB_indexes.svg)](https://github.com/Naereen/badges/blob/master/LICENSE)
+### :scroll: License ? [![GitHub license](https://img.shields.io/github/license/Naereen/Kullback-Leibler-divergences-and-kl-UCB-indexes.svg)](https://github.com/Naereen/badges/blob/master/LICENSE)
 [MIT Licensed](https://lbesson.mit-license.org/) (file [LICENSE](LICENSE)).
 © [Lilian Besson](https://GitHub.com/Naereen), 2018.
 
-[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/Naereen/Kullback-Leibler_divergences_and_kl-UCB_indexes/graphs/commit-activity)
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/Naereen/Kullback-Leibler-divergences-and-kl-UCB-indexes/graphs/commit-activity)
 [![Ask Me Anything !](https://img.shields.io/badge/Ask%20me-anything-1abc9c.svg)](https://GitHub.com/Naereen/ama)
-[![Analytics](https://ga-beacon.appspot.com/UA-38514290-17/github.com/Naereen/Kullback-Leibler_divergences_and_kl-UCB_indexes/README.md?pixel)](https://GitHub.com/Naereen/Kullback-Leibler_divergences_and_kl-UCB_indexes/)
+[![Analytics](https://ga-beacon.appspot.com/UA-38514290-17/github.com/Naereen/Kullback-Leibler-divergences-and-kl-UCB-indexes/README.md?pixel)](https://GitHub.com/Naereen/Kullback-Leibler-divergences-and-kl-UCB-indexes/)
 
 [![ForTheBadge uses-badges](http://ForTheBadge.com/images/badges/uses-badges.svg)](http://ForTheBadge.com)
 [![ForTheBadge uses-git](http://ForTheBadge.com/images/badges/uses-git.svg)](https://GitHub.com/)

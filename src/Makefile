@@ -1,7 +1,7 @@
 # GNU Make makefile to build the kullback_leibler_cython.pyx C extension
 #
 # MIT Licensed, (C) 2018 Lilian Besson (Naereen)
-# https://GitHub.com/Naereen/Naereen/Kullback-Leibler_divergences_and_kl-UCB_indexes
+# https://GitHub.com/Naereen/Naereen/Kullback-Leibler-divergences-and-kl-UCB-indexes
 #
 
 all: clean tests build install clean
@@ -72,14 +72,14 @@ cleancache:
 	rm -rfv __pycache__ *.pyc
 
 cleanall: clean cleancache
-	rm -rvf /tmp/Kullback-Leibler_divergences_and_kl-UCB_indexes/build/
-	mv -vf build /tmp/Kullback-Leibler_divergences_and_kl-UCB_indexes/
+	rm -rvf /tmp/Kullback-Leibler-divergences-and-kl-UCB-indexes/build/
+	mv -vf build /tmp/Kullback-Leibler-divergences-and-kl-UCB-indexes/
 
 open:
-	mime-open https://github.com/Naereen/Naereen/Kullback-Leibler_divergences_and_kl-UCB_indexesy
+	mime-open https://github.com/Naereen/Naereen/Kullback-Leibler-divergences-and-kl-UCB-indexesy
 
 cow:
-	cowsay "Go to https://github.com/Naereen/Kullback-Leibler_divergences_and_kl-UCB_indexes for more fun stuff"
+	cowsay "Go to https://github.com/Naereen/Kullback-Leibler-divergences-and-kl-UCB-indexes for more fun stuff"
 
 # copyso:
 # 	-\cp build/lib*/kullback_leibler_cython*.* ../

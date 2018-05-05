@@ -5,7 +5,7 @@ all:	export send
 
 send:	send_zamok
 send_zamok:
-	CP ./ ${Szam}publis/Kullback-Leibler_divergences_and_kl-UCB_indexes.git/
+	CP ./ ${Szam}publis/Kullback-Leibler-divergences-and-kl-UCB-indexes.git/
 
 doc:
 	pdoc --overwrite --html --html-dir ./doc/ ./src/kullback_leibler.py
