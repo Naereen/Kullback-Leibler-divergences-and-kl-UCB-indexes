@@ -142,7 +142,7 @@ Be sure to include the dynamic library when you need it, or in a folder accessib
 - C version: the file is `kullback_leibler_c.so` (for Python 2) or the `kullback_leibler_c.cpython-35m-x86_64-linux-gnu.so` (for Python 3.5, or higher, adapt the name).
 
 ## With pip ?
-This project is hosted on [the Pypi package repository](https://pypi.org/project/Kullback-Leibler_divergences_and_kl-UCB_indexes/).
+This project is hosted on [the Pypi package repository](https://pypi.org/project/kullback_leibler/).
 
 ```bash
 sudo pip install kullback_leibler
@@ -150,7 +150,7 @@ sudo pip install kullback_leibler
 python -c "from kullback_leibler import klBern; print(round(klBern(0.1,0.5), 4) == 0.3681)"  # test
 ```
 
-[![kullback_leibler in pypi](https://img.shields.io/pypi/v/kullback_leibler.svg)](https://pypi.org/project/Kullback-Leibler_divergences_and_kl-UCB_indexes/)
+[![kullback_leibler in pypi](https://img.shields.io/pypi/v/kullback_leibler.svg)](https://pypi.org/project/kullback_leibler/)
 ![PyPI implementation](https://img.shields.io/pypi/implementation/kullback_leibler.svg)
 ![PyPI pyversions](https://img.shields.io/pypi/pyversions/kullback_leibler.svg)
 
