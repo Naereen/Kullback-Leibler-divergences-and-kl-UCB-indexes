@@ -1,59 +1,13 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-""" Kullback-Leibler divergence functions and klUCB utilities. Optimized version that should be compiled using Cython (http://docs.cython.org/).
+""" Kullback-Leibler divergence functions and klUCB utilities.
 
-- Faster implementation can be found in a C file, in ``Policies/C``, and should be compiled to speedup computations.
-- However, the version here have examples, doctests.
+- Faster implementation can be found in a C file, in the ``C`` folder, or a Cython file, and should be compiled to speedup computations.
+- However, the version here have examples, doctests, and are jit compiled on the fly (with numba, cf. http://numba.pydata.org/).
 - Cf. https://en.wikipedia.org/wiki/Kullback%E2%80%93Leibler_divergence
 - Reference: [Filippi, Cappé & Garivier - Allerton, 2011](https://arxiv.org/pdf/1004.5229.pdf) and [Garivier & Cappé, 2011](https://arxiv.org/pdf/1102.2490.pdf)
 
-
-.. note::
-
-    The C version is still faster, but not so much. The Cython version has the advantage of providing docstrings, and optional arguments, and is only 2 to 3 times slower than the optimal performance!
-    Here are some comparisons of the two, when computing KL-UCB indexes:
-
-    >>> r = np.random.random
-    >>> import kullback_leibler_c as kl_c
-    >>> import kullback_leibler_cython as kl_cy # fake, just for illustration
-
-    >>> %timeit kl_c.klucbBern(r(), r(), 1e-6)
-    2.26 µs ± 21.5 ns per loop (mean ± std. dev. of 7 runs, 100000 loops each)
-    >>> %timeit kl_cy.klucbBern(r(), r())
-    6.04 µs ± 46.7 ns per loop (mean ± std. dev. of 7 runs, 10000 loops each)
-
-    >>> %timeit kl_c.klucbGamma(r(), r(), 1e-6)
-    2.56 µs ± 225 ns per loop (mean ± std. dev. of 7 runs, 100000 loops each)
-    >>> %timeit kl_cy.klucbGamma(r(), r())
-    6.47 µs ± 513 ns per loop (mean ± std. dev. of 7 runs, 10000 loops each)
-
-    >>> %timeit kl_c.klucbExp(r(), r(), 1e-6)
-    2.03 µs ± 92.2 ns per loop (mean ± std. dev. of 7 runs, 100000 loops each)
-    >>> %timeit kl_cy.klucbExp(r(), r())
-    4.75 µs ± 444 ns per loop (mean ± std. dev. of 7 runs, 10000 loops each)
-
-    >>> %timeit kl_c.klucbGauss(r(), r(), 1e-6)  # so easy computation: no difference!
-    800 ns ± 14.3 ns per loop (mean ± std. dev. of 7 runs, 100000 loops each)
-    >>> %timeit kl_cy.klucbGauss(r(), r())
-    732 ns ± 71.5 ns per loop (mean ± std. dev. of 7 runs, 10000 loops each)
-
-    >>> %timeit kl_c.klucbPoisson(r(), r(), 1e-6)
-    2.33 µs ± 167 ns per loop (mean ± std. dev. of 7 runs, 100000 loops each)
-    >>> %timeit kl_cy.klucbPoisson(r(), r())
-    5.13 µs ± 521 ns per loop (mean ± std. dev. of 7 runs, 10000 loops each)
-
-
-.. warning::
-
-    This extension should be used with the ``setup.py`` script, by running::
-
-        $ python setup.py build_ext --inplace
-
-    You can also use [pyximport](http://docs.cython.org/en/latest/src/tutorial/cython_tutorial.html#pyximport-cython-compilation-for-developers) to import the ``kl_cy`` module transparently:
-
-    >>> import pyximport; pyximport.install()  # instantaneous  # doctest: +ELLIPSIS
-    (None, <pyximport.pyximport.PyxImporter at 0x...>)
-    >>> import kl_cy as kullback     # takes about two seconds
-    >>> # then use kullback.klucbBern or others, as if they came from the pure Python version!
+.. warning:: Using Numba does not always bring significant speedup! For instance, running the doctests in both version is way slower for the Numba version, as every jit compiled function need a warmup time before being effectively faster than the naive Python function. (Benchmark: 0.25s for naive version vs 3.5s for numba version)
 
 
 .. warning::
@@ -74,7 +28,7 @@
 
     >>> # WARNING using np.vectorize gave weird result on klGauss
     >>> # klGauss_vect = np.vectorize(klGauss, excluded="y")
-    >>> def klGauss_vect(xs, y, sig2x=0.25) -> float:  # vectorized for first input only
+    >>> def klGauss_vect(xs, y, sig2x=0.25):  # vectorized for first input only
     ...    return np.array([klGauss(x, y, sig2x) for x in xs])
     >>> klGauss_vect([-1, 0, 1], 0.1)  # doctest: +ELLIPSIS
     array([2.42, 0.02, 1.62])
@@ -82,18 +36,44 @@
 from __future__ import division, print_function  # Python 2 compatibility
 
 __author__ = "Lilian Besson"
-__version__ = "0.9"
+__version__ = "0.1"
 
-from libc.math cimport log, sqrt, exp
+from math import log, sqrt, exp
+
+import numpy as np
 
 
-cdef float eps = 1e-15  #: Threshold value: everything in [0, 1] is truncated to [eps, 1 - eps]
+#: Configure the use of numba
+USE_NUMBA = False
+USE_NUMBA = True   # XXX Experimental
+
+if not USE_NUMBA:
+    print("Warning: numba.jit seems to be disabled. Using a dummy decorator for numba.jit() ...")  # DEBUG
+
+# DONE I tried numba.jit() on these functions, and it DOES not give any speedup...:-( sad sad !
+try:
+    from numba.decorators import jit
+    import locale  # See this bug, http://numba.pydata.org/numba-doc/dev/user/faq.html#llvm-locale-bug
+    locale.setlocale(locale.LC_NUMERIC, 'C')
+    # print("Info: numba.jit seems to be available.")  # DEBUG
+except ImportError:
+    print("Warning: numba.jit seems to not be available. Using a dummy decorator for numba.jit() ...\nIf you want the speed up brought by numba.jit, try to manually install numba and check that it works (installing llvmlite can be tricky, cf. https://github.com/numba/numba#custom-python-environments")  # DEBUG
+    USE_NUMBA = False
+
+if not USE_NUMBA:
+    def jit(f):
+        """Fake numba.jit decorator."""
+        return f
+
+
+eps = 1e-15  #: Threshold value: everything in [0, 1] is truncated to [eps, 1 - eps]
 
 
 # --- Simple Kullback-Leibler divergence for known distributions
 
 
-def klBern(float x, float y) -> float:
+@jit
+def klBern(x, y):
     r""" Kullback-Leibler divergence for Bernoulli distributions. https://en.wikipedia.org/wiki/Bernoulli_distribution#Kullback.E2.80.93Leibler_divergence
 
     .. math:: \mathrm{KL}(\mathcal{B}(x), \mathcal{B}(y)) = x \log(\frac{x}{y}) + (1-x) \log(\frac{1-x}{1-y}).
@@ -119,7 +99,8 @@ def klBern(float x, float y) -> float:
     return x * log(x / y) + (1 - x) * log((1 - x) / (1 - y))
 
 
-def klBin(float x, float y, int n) -> float:
+@jit
+def klBin(x, y, n):
     r""" Kullback-Leibler divergence for Binomial distributions. https://math.stackexchange.com/questions/320399/kullback-leibner-divergence-of-binomial-distributions
 
     - It is simply the n times :func:`klBern` on x and y.
@@ -149,7 +130,8 @@ def klBin(float x, float y, int n) -> float:
     return n * (x * log(x / y) + (1 - x) * log((1 - x) / (1 - y)))
 
 
-def klPoisson(float x, float y) -> float:
+@jit
+def klPoisson(x, y):
     r""" Kullback-Leibler divergence for Poison distributions. https://en.wikipedia.org/wiki/Poisson_distribution#Kullback.E2.80.93Leibler_divergence
 
     .. math:: \mathrm{KL}(\mathrm{Poisson}(x), \mathrm{Poisson}(y)) = y - x + x \times \log(\frac{x}{y}).
@@ -177,7 +159,8 @@ def klPoisson(float x, float y) -> float:
     return y - x + x * log(x / y)
 
 
-def klExp(float x, float y) -> float:
+@jit
+def klExp(x, y):
     r""" Kullback-Leibler divergence for exponential distributions. https://en.wikipedia.org/wiki/Exponential_distribution#Kullback.E2.80.93Leibler_divergence
 
     .. math::
@@ -217,7 +200,8 @@ def klExp(float x, float y) -> float:
         return x / y - 1 - log(x / y)
 
 
-def klGamma(float x, float y, float a=1) -> float:
+@jit
+def klGamma(x, y, a=1):
     r""" Kullback-Leibler divergence for gamma distributions. https://en.wikipedia.org/wiki/Gamma_distribution#Kullback.E2.80.93Leibler_divergence
 
     - It is simply the a times :func:`klExp` on x and y.
@@ -261,7 +245,8 @@ def klGamma(float x, float y, float a=1) -> float:
         return a * (x / y - 1 - log(x / y))
 
 
-def klNegBin(float x, float y, r=1) -> float:
+@jit
+def klNegBin(x, y, r=1):
     r""" Kullback-Leibler divergence for negative binomial distributions. https://en.wikipedia.org/wiki/Negative_binomial_distribution
 
     .. math:: \mathrm{KL}(\mathrm{NegBin}(x, r), \mathrm{NegBin}(y, r)) = r \times \log((r + x) / (r + y)) - x \times \log(y \times (r + x) / (x \times (r + y))).
@@ -304,7 +289,8 @@ def klNegBin(float x, float y, r=1) -> float:
     return r * log((r + x) / (r + y)) - x * log(y * (r + x) / (x * (r + y)))
 
 
-def klGauss(float x, float y, float sig2x=0.25, float sig2y=0.25) -> float:
+@jit
+def klGauss(x, y, sig2x=0.25, sig2y=None):
     r""" Kullback-Leibler divergence for Gaussian distributions of means ``x`` and ``y`` and variances ``sig2x`` and ``sig2y``, :math:`\nu_1 = \mathcal{N}(x, \sigma_x^2)` and :math:`\nu_2 = \mathcal{N}(y, \sigma_x^2)`:
 
     .. math:: \mathrm{KL}(\nu_1, \nu_2) = \frac{(x - y)^2}{2 \sigma_y^2} + \frac{1}{2}\left( \frac{\sigma_x^2}{\sigma_y^2} - 1 \log\left(\frac{\sigma_x^2}{\sigma_y^2}\right) \right).
@@ -379,7 +365,7 @@ def klGauss(float x, float y, float sig2x=0.25, float sig2y=0.25) -> float:
 
     .. warning:: Using :class:`Policies.klUCB` (and variants) with :func:`klGauss` is equivalent to use :class:`Policies.UCB`, so prefer the simpler version.
     """
-    if - eps < (sig2y - sig2x) < eps:
+    if sig2y is None or - eps < (sig2y - sig2x) < eps:
         return (x - y) ** 2 / (2. * sig2x)
     else:
         return (x - y) ** 2 / (2. * sig2y) + 0.5 * ((sig2x/sig2y)**2 - 1 - log(sig2x/sig2y))
@@ -387,18 +373,14 @@ def klGauss(float x, float y, float sig2x=0.25, float sig2y=0.25) -> float:
 
 # --- KL functions, for the KL-UCB policy
 
-def klucb(float x, float d, kl,
-        float upperbound,
-        float lowerbound=float('-inf'),
-        float precision=1e-6,
-        int max_iterations=50
-    ) -> float:
+@jit
+def klucb(x, d, kl, upperbound, lowerbound=float('-inf'), precision=1e-6, max_iterations=50):
     """ The generic KL-UCB index computation.
 
     - x: value of the cum reward,
     - d: upper bound on the divergence,
     - kl: the KL divergence to be used (:func:`klBern`, :func:`klGauss`, etc),
-    - upperbound, lowerbound=float('-inf') -> float: the known bound of the values x,
+    - upperbound, lowerbound=float('-inf'): the known bound of the values x,
     - precision=1e-6: the threshold from where to stop the research,
     - max_iterations: max number of iterations of the loop (safer to bound it to reduce time complexity).
 
@@ -413,7 +395,7 @@ def klucb(float x, float d, kl,
     >>> klucb(x, d, klBern, upperbound, lowerbound=0, precision=1e-3, max_iterations=10)  # doctest: +ELLIPSIS
     0.9941...
     >>> klucb(x, d, klBern, upperbound, lowerbound=0, precision=1e-6, max_iterations=10)  # doctest: +ELLIPSIS
-    0.994482...  # doctest: +ELLIPSIS
+    0.994482...
     >>> klucb(x, d, klBern, upperbound, lowerbound=0, precision=1e-3, max_iterations=50)  # doctest: +ELLIPSIS
     0.9941...
     >>> klucb(x, d, klBern, upperbound, lowerbound=0, precision=1e-6, max_iterations=100)  # more and more precise!  # doctest: +ELLIPSIS
@@ -421,9 +403,9 @@ def klucb(float x, float d, kl,
 
     .. note:: See below for more examples for different KL divergence functions.
     """
-    cdef float value = max(x, lowerbound)
-    cdef float u = upperbound
-    cdef int _count_iteration = 0
+    value = max(x, lowerbound)
+    u = upperbound
+    _count_iteration = 0
     while _count_iteration < max_iterations and u - value > precision:
         _count_iteration += 1
         m = (value + u) / 2.
@@ -434,7 +416,8 @@ def klucb(float x, float d, kl,
     return (value + u) / 2.
 
 
-def klucbBern(float x, float d, float precision=1e-6) -> float:
+@jit
+def klucbBern(x, d, precision=1e-6):
     """ KL-UCB index computation for Bernoulli distributions, using :func:`klucb`.
 
     - Influence of x:
@@ -463,12 +446,13 @@ def klucbBern(float x, float d, float precision=1e-6) -> float:
     >>> klucbBern(0.9, 0.9)  # doctest: +ELLIPSIS
     0.999995...
     """
-    cdef float upperbound = min(1., klucbGauss(x, d, sig2x=0.25))  # variance 1/4 for [0,1] bounded distributions
+    upperbound = min(1., klucbGauss(x, d, sig2x=0.25))  # variance 1/4 for [0,1] bounded distributions
     # upperbound = min(1., klucbPoisson(x, d))  # also safe, and better ?
     return klucb(x, d, klBern, upperbound, precision)
 
 
-def klucbGauss(float x, float d, float sig2x=0.25, float precision=0.) -> float:
+@jit
+def klucbGauss(x, d, sig2x=0.25, precision=0.):
     """ KL-UCB index computation for Gaussian distributions.
 
     - Note that it does not require any search.
@@ -506,7 +490,8 @@ def klucbGauss(float x, float d, float sig2x=0.25, float precision=0.) -> float:
     return x + sqrt(2 * sig2x * d)
 
 
-def klucbPoisson(float x, float d, float precision=1e-6) -> float:
+@jit
+def klucbPoisson(x, d, precision=1e-6):
     """ KL-UCB index computation for Poisson distributions, using :func:`klucb`.
 
     - Influence of x:
@@ -535,11 +520,12 @@ def klucbPoisson(float x, float d, float precision=1e-6) -> float:
     >>> klucbPoisson(0.9, 0.9)  # doctest: +ELLIPSIS
     2.831573...
     """
-    cdef float upperbound = x + d + sqrt(d * d + 2 * x * d)  # looks safe, to check: left (Gaussian) tail of Poisson dev
+    upperbound = x + d + sqrt(d * d + 2 * x * d)  # looks safe, to check: left (Gaussian) tail of Poisson dev
     return klucb(x, d, klPoisson, upperbound, precision)
 
 
-def klucbExp(float x, float d, float precision=1e-6) -> float:
+@jit
+def klucbExp(x, d, precision=1e-6):
     """ KL-UCB index computation for exponential distributions, using :func:`klucb`.
 
     - Influence of x:
@@ -568,8 +554,6 @@ def klucbExp(float x, float d, float precision=1e-6) -> float:
     >>> klucbExp(0.9, 0.9)  # doctest: +ELLIPSIS
     5.031795...
     """
-    cdef float upperbound
-    cdef float lowerbound
     if d < 0.77:  # XXX where does this value come from?
         upperbound = x / (1 + 2. / 3 * d - sqrt(4. / 9 * d * d + 2 * d))
         # safe, klexp(x,y) >= e^2/(2*(1-2e/3)) if x=y(1-e)
@@ -583,7 +567,8 @@ def klucbExp(float x, float d, float precision=1e-6) -> float:
 
 
 # FIXME this one is wrong!
-def klucbGamma(float x, float d, float precision=1e-6) -> float:
+@jit
+def klucbGamma(x, d, precision=1e-6):
     """ KL-UCB index computation for Gamma distributions, using :func:`klucb`.
 
     - Influence of x:
@@ -612,8 +597,6 @@ def klucbGamma(float x, float d, float precision=1e-6) -> float:
     >>> klucbGamma(0.9, 0.9)  # doctest: +ELLIPSIS
     5.031...
     """
-    cdef float upperbound
-    cdef float lowerbound
     if d < 0.77:  # XXX where does this value come from?
         upperbound = x / (1 + 2. / 3 * d - sqrt(4. / 9 * d * d + 2 * d))
         # safe, klexp(x,y) >= e^2/(2*(1-2e/3)) if x=y(1-e)
@@ -625,3 +608,14 @@ def klucbGamma(float x, float d, float precision=1e-6) -> float:
         lowerbound = x / (1 + d - sqrt(d * d + 2 * d))
     # FIXME specify the value for a !
     return klucb(x, d, klGamma, max(upperbound, 1e2), min(-1e2, lowerbound), precision)
+
+
+# --- Debugging
+
+if __name__ == "__main__":
+    # Code for debugging purposes.
+    from doctest import testmod
+    print("\nTesting automatically all the docstring written in each functions of this module :")
+    testmod(verbose=True)
+
+    print("\nDone for tests of 'kullback_leibler_numba.py' ...")
