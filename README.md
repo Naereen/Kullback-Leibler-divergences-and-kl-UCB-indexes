@@ -36,6 +36,32 @@ XXX
 XXX
 ```
 
+### Vectorized version?
+All functions are *not* vectorized, and assume only one value for each argument.
+If you want vectorized function, use the wrapper [`numpy.vectorize`](https://docs.scipy.org/doc/numpy/reference/generated/numpy.vectorize.html#numpy.vectorize):
+
+```python
+>>> import numpy as np
+>>> klBern_vect = np.vectorize(klBern)
+>>> klBern_vect([0.1, 0.5, 0.9], 0.2)
+array([0.036..., 0.223..., 1.145...])
+>>> klBern_vect(0.4, [0.2, 0.3, 0.4])
+array([0.104..., 0.022..., 0...])
+>>> klBern_vect([0.1, 0.5, 0.9], [0.2, 0.3, 0.4])
+array([0.036..., 0.087..., 0.550...])
+```
+
+For some functions, you would be better off writing a vectorized version manually, for instance if you want to fix a value of some optional parameters:
+
+```python
+>>> # WARNING using np.vectorize gave weird result on klGauss
+>>> # klGauss_vect = np.vectorize(klGauss, excluded="y")
+>>> def klGauss_vect(xs, y, sig2x=0.25):  # vectorized for first input only
+...    return np.array([klGauss(x, y, sig2x) for x in xs])
+>>> klGauss_vect([-1, 0, 1], 0.1)
+array([2.42, 0.02, 1.62])
+```
+
 ### Documentation
 See [this file](https://naereen.github.io/Kullback-Leibler_divergences_and_kl-UCB_indexes/doc/index.html).
 
@@ -59,6 +85,8 @@ $ ipython
 ```
 
 Then let's compare a single computation of a KL divergence, for instance of two Bernoulli distributions:
+
+FIXME include the real times
 
 ```python
 >>> %timeit (r(), r())   # don't neglect this "constant"!
@@ -119,7 +147,7 @@ This project is hosted on [the Pypi package repository](https://pypi.org/project
 ```bash
 sudo pip install kullback_leibler
 # test it
-python -c "from kullback_leibler import klBern; print(klBern(0.1,0.5) == XXX)"  # test
+python -c "from kullback_leibler import klBern; print(round(klBern(0.1,0.5), 4) == 0.3681)"  # test
 ```
 
 [![kullback_leibler in pypi](https://img.shields.io/pypi/v/kullback_leibler.svg)](https://pypi.org/project/Kullback-Leibler_divergences_and_kl-UCB_indexes/)
@@ -131,7 +159,6 @@ python -c "from kullback_leibler import klBern; print(klBern(0.1,0.5) == XXX)"  
 ## Julia implementation ?
 [I was curious](https://github.com/Naereen/Kullback-Leibler_divergences_and_kl-UCB_indexes/issues/1) and wanted to write the same algorithm in [Julia](http://julialang.org).
 Here it is: [kullback_leibler.jl](https://github.com/Naereen/Kullback-Leibler_divergences_and_kl-UCB_indexes/blob/master/src/kullback_leibler.jl).
-See [this part of the notebook](https://nbviewer.jupyter.org/github/Naereen/notebooks/blob/master/Kullback-Leibler_divergences_in_native_Python__Cython_and_Numba.ipynb#%28Experimental%29-Julia-implementation) for a benchmark between Julia and Python.
 
 The Julia package is published here: [Naereen/LempelZiv.jl](https://github.com/Naereen/LempelZiv.jl),
 and see [here for its documentation](https://naereen.github.io/LempelZiv.jl/doc/index.html).
@@ -139,10 +166,10 @@ and see [here for its documentation](https://naereen.github.io/LempelZiv.jl/doc/
 ----
 
 ## About
-### Language?
-Python v2.7+ or Python v3.1+.
+### Languages?
+Python v2.7+ or Python v3.4+.
 
-- [Numba](http://numba.pydata.org/) can be used to speed up the pure Python version (in `kullback_leibler_numba.py`).
+- [Numba](http://numba.pydata.org/) *can* be used to speed up the pure Python version (in `kullback_leibler_numba.py`). It is purely optional, and the speedup is not that much when using numba (see the notebook for the complete benchmark).
 - [Cython](http://cython.org/) is *needed* to build the C extension (faster) (in `kullback_leibler_cython.py`).
 - For both the Cython and the C versions, a working version of [gcc](https://gcc.gnu.org/) is required (probably version >= 6.0).
 
