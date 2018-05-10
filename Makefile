@@ -12,10 +12,11 @@ send_zamok:
 .PHONY: python-doc python-tests
 
 python-doc:
-	pdoc --overwrite --html --html-dir ./python-doc/ ./src/kullback_leibler.py
-	mv -vf ./python-doc/kullback_leibler.m.html ./python-doc/index.html
-	# pdoc --overwrite --html --html-dir ./python-doc/ ./src/kullback_leibler_numba.py
-	# mv -vf ./python-doc/kullback_leibler_numba.m.html ./python-doc/kullback_leibler_numba.html
+	pdoc --overwrite --html --html-dir ./python-docs/ ./src/kullback_leibler.py
+	mv -vf ./python-docs/kullback_leibler.m.html ./python-docs/index.html
+	# pdoc --overwrite --html --html-dir ./python-docs/ ./src/kullback_leibler_numba.py
+	# mv -vf ./python-docs/kullback_leibler_numba.m.html ./python-docs/kullback_leibler_numba.html
+	xdg-open ./python-docs/index.html
 
 python-tests:
 	python ./src/kullback_leibler.py
@@ -26,11 +27,11 @@ python-tests:
 .PHONY: julia-doc julia-tests
 
 julia-tests:
-	julia ./julia-tests/runtest.jl
+	julia ./julia-tests/runtests.jl
 
 julia-doc:
-	cd julia-genrate-docs ; julia ./main.jl
-
+	cd julia-generate-docs ; julia ./make.jl
+	xdg-open ./julia-docs/index.html
 
 # Other rules
 
