@@ -158,7 +158,7 @@ python -c "from kullback_leibler import klBern; print(round(klBern(0.1,0.5), 4) 
 
 ## Julia implementation ?
 [I was curious](https://github.com/Naereen/Kullback-Leibler-divergences-and-kl-UCB-indexes/issues/1) and wanted to write the same algorithm in [Julia](http://julialang.org).
-Here it is: [KullbackLeibler.jl](https://github.com/Naereen/Kullback-Leibler-divergences-and-kl-UCB-indexes/blob/master/src/KullbackLeibler.jl).
+Here it is: [KullbackLeibler.jl](https://github.com/Naereen/Kullback-Leibler-divergences-and-kl-UCB-indexes/blob/master/julia-src/KullbackLeibler.jl).
 
 The Julia package is published here: [Naereen/KullbackLeibler.jl](https://github.com/Naereen/KullbackLeibler.jl),
 and see [here for its documentation](https://naereen.github.io/KullbackLeibler.jl/doc/index.html).

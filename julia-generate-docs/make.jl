@@ -11,7 +11,7 @@ __version__ = "0.1"
 # https://juliadocs.github.io/Documenter.jl/latest/
 using Documenter
 
-include("../src/KullbackLeibler.jl")
+include("../julia-src/KullbackLeibler.jl")
 # include("KullbackLeibler.jl")
 using KullbackLeibler
 
@@ -20,7 +20,7 @@ makedocs(
     sitename = "KullbackLeibler.jl",
     pages = [
         "index.md",
-        "About" => "README.md"
+        # "About" => "README.md"
     ],
     # WARNING maybe I need more options right here?
 )

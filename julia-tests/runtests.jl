@@ -11,7 +11,7 @@ doc""" Script to test KullbackLeibler.jl
 __author__ = "Lilian Besson (Naereen)"
 __version__ = "0.1"
 
-include("../src/KullbackLeibler.jl")
+include("../julia-src/KullbackLeibler.jl")
 # include("KullbackLeibler.jl")
 using KullbackLeibler
 using Base.Test

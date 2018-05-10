@@ -1,5 +1,5 @@
 #!/usr/bin/env julia
-doc""" Kullback-Leibler divergence functions and klUCB utilities, in naive Julia code.
+""" Kullback-Leibler divergence functions and klUCB utilities, in naive Julia code.
 
 - How to use it? From Julia, it's easy:
 
@@ -30,8 +30,11 @@ __author__ = "Lilian Besson"
 __version__ = "0.1"
 
 
+# Name of module
 module KullbackLeibler
-export KullbackLeibler
+
+# List of exported functions
+export klBern, klBin, klPoisson, klExp, klGamma, klNegBin, klGauss, klucb, klucbBern, klucbGauss, klucbPoisson, klucbExp, klucbGamma
 
 
 eps = 1e-15  #: Threshold value: everything in [0, 1] is truncated to [eps, 1 - eps]
@@ -40,11 +43,14 @@ eps = 1e-15  #: Threshold value: everything in [0, 1] is truncated to [eps, 1 - 
 # --- Simple Kullback-Leibler divergence for known distributions
 
 
-doc""" Kullback-Leibler divergence for Bernoulli distributions. https://en.wikipedia.org/wiki/Bernoulli_distribution#Kullback.E2.80.93Leibler_divergence
+doc"""
+    function klBern(x, y)
+
+Kullback-Leibler divergence for Bernoulli distributions. https://en.wikipedia.org/wiki/Bernoulli_distribution#Kullback.E2.80.93Leibler_divergence
 
 $$\mathrm{KL}(\mathcal{B}(x), \mathcal{B}(y)) = x \log(\frac{x}{y}) + (1-x) \log(\frac{1-x}{1-y}).$$
 
-```jldoctest
+```julia
     julia> klBern(0.5, 0.5)
     0.0
     julia> klBern(0.1, 0.9)
@@ -59,7 +65,7 @@ $$\mathrm{KL}(\mathcal{B}(x), \mathcal{B}(y)) = x \log(\frac{x}{y}) + (1-x) \log
 
 - Special values:
 
-```jldoctest
+```julia
     julia> klBern(0, 1)  # Should be +Inf, but 0 --> eps, 1 --> 1 - eps
     34.539575...
 ```
@@ -71,7 +77,10 @@ function klBern(x, y)
 end
 
 
-doc""" Kullback-Leibler divergence for Binomial distributions. https://math.stackexchange.com/questions/320399/kullback-leibner-divergence-of-binomial-distributions
+doc"""
+    function klBin(x, y, n)
+
+Kullback-Leibler divergence for Binomial distributions. https://math.stackexchange.com/questions/320399/kullback-leibner-divergence-of-binomial-distributions
 
 - It is simply the n times `klBern` on x and y.
 
@@ -79,7 +88,7 @@ $$\mathrm{KL}(\mathrm{Bin}(x, n), \mathrm{Bin}(y, n)) = n \times \left(x \log(\f
 
 - **Warning**: The two distributions must have the same parameter n, and x, y are p, q in (0, 1).
 
-```jldoctest
+```julia
     julia> klBin(0.5, 0.5, 10)
     0.0
     julia> klBin(0.1, 0.9, 10)
@@ -94,7 +103,7 @@ $$\mathrm{KL}(\mathrm{Bin}(x, n), \mathrm{Bin}(y, n)) = n \times \left(x \log(\f
 
 - Special values:
 
-```jldoctest
+```julia
     julia> klBin(0, 1, 10)  # Should be +Inf, but 0 --> eps, 1 --> 1 - eps
     345.39575...
 ```
@@ -106,11 +115,14 @@ function klBin(x, y, n)
 end
 
 
-doc""" Kullback-Leibler divergence for Poison distributions. https://en.wikipedia.org/wiki/Poisson_distribution#Kullback.E2.80.93Leibler_divergence
+doc"""
+    function klPoisson(x, y)
+
+Kullback-Leibler divergence for Poison distributions. https://en.wikipedia.org/wiki/Poisson_distribution#Kullback.E2.80.93Leibler_divergence
 
 $$\mathrm{KL}(\mathrm{Poisson}(x), \mathrm{Poisson}(y)) = y - x + x \times \log(\frac{x}{y}).$$
 
-```jldoctest
+```julia
     julia> klPoisson(3, 3)
     0.0
     julia> klPoisson(2, 1)
@@ -125,7 +137,7 @@ $$\mathrm{KL}(\mathrm{Poisson}(x), \mathrm{Poisson}(y)) = y - x + x \times \log(
 
 - Special values:
 
-```jldoctest
+```julia
     julia> klPoisson(1, 0)  # Should be +Inf, but 0 --> eps, 1 --> 1 - eps
     33.538776...
     julia> klPoisson(0, 0)
@@ -139,7 +151,10 @@ function klPoisson(x, y)
 end
 
 
-doc""" Kullback-Leibler divergence for exponential distributions. https://en.wikipedia.org/wiki/Exponential_distribution#Kullback.E2.80.93Leibler_divergence
+doc"""
+    function klExp(x, y)
+
+Kullback-Leibler divergence for exponential distributions. https://en.wikipedia.org/wiki/Exponential_distribution#Kullback.E2.80.93Leibler_divergence
 
 .. math::
 
@@ -148,7 +163,7 @@ doc""" Kullback-Leibler divergence for exponential distributions. https://en.wik
     +\infty & \text{otherwise}
     \end{cases}
 
-```jldoctest
+```julia
     julia> klExp(3, 3)
     0.0
     julia> klExp(3, 6)
@@ -165,7 +180,7 @@ doc""" Kullback-Leibler divergence for exponential distributions. https://en.wik
 
 - x, y have to be positive:
 
-```jldoctest
+```julia
     julia> klExp(-3, 2)
     Inf
     julia> klExp(3, -2)
@@ -185,7 +200,10 @@ function klExp(x, y)
 end
 
 
-doc""" Kullback-Leibler divergence for gamma distributions. https://en.wikipedia.org/wiki/Gamma_distribution#Kullback.E2.80.93Leibler_divergence
+doc"""
+    function klGamma(x, y, a=1)
+
+Kullback-Leibler divergence for gamma distributions. https://en.wikipedia.org/wiki/Gamma_distribution#Kullback.E2.80.93Leibler_divergence
 
 - It is simply the a times `klExp` on x and y.
 
@@ -198,7 +216,7 @@ doc""" Kullback-Leibler divergence for gamma distributions. https://en.wikipedia
 
 - **Warning**: The two distributions must have the same parameter a.
 
-```jldoctest
+```julia
     julia> klGamma(3, 3)
     0.0
     julia> klGamma(3, 6)
@@ -215,7 +233,7 @@ doc""" Kullback-Leibler divergence for gamma distributions. https://en.wikipedia
 
 - x, y have to be positive:
 
-```jldoctest
+```julia
     julia> klGamma(-3, 2)
     Inf
     julia> klGamma(3, -2)
@@ -235,13 +253,16 @@ function klGamma(x, y, a=1)
 end
 
 
-doc""" Kullback-Leibler divergence for negative binomial distributions. https://en.wikipedia.org/wiki/Negative_binomial_distribution
+doc"""
+    function klNegBin(x, y, r=1)
+
+Kullback-Leibler divergence for negative binomial distributions. https://en.wikipedia.org/wiki/Negative_binomial_distribution
 
 $$\mathrm{KL}(\mathrm{NegBin}(x, r), \mathrm{NegBin}(y, r)) = r \times \log((r + x) / (r + y)) - x \times \log(y \times (r + x) / (x \times (r + y))).$$
 
 - **Warning**: The two distributions must have the same parameter r.
 
-```jldoctest
+```julia
     julia> klNegBin(0.5, 0.5)
     0.0
     julia> klNegBin(0.1, 0.9)
@@ -256,14 +277,14 @@ $$\mathrm{KL}(\mathrm{NegBin}(x, r), \mathrm{NegBin}(y, r)) = r \times \log((r +
 
 - Special values:
 
-```jldoctest
+```julia
     julia> klBern(0, 1)  # Should be +Inf, but 0 --> eps, 1 --> 1 - eps
     34.539575...
 ```
 
 - With other values for `r`:
 
-```jldoctest
+```julia
     julia> klNegBin(0.5, 0.5, r=2)
     0.0
     julia> klNegBin(0.1, 0.9, r=2)
@@ -285,7 +306,10 @@ function klNegBin(x, y, r=1)
 end
 
 
-doc""" Kullback-Leibler divergence for Gaussian distributions of means ``x`` and ``y`` and variances ``sig2x`` and ``sig2y``, $\nu_1 = \mathcal{N}(x, \sigma_x^2)$ and $\nu_2 = \mathcal{N}(y, \sigma_x^2)$:
+doc"""
+    function klGauss(x, y, sig2x=0.25, sig2y=0.25)
+
+Kullback-Leibler divergence for Gaussian distributions of means ``x`` and ``y`` and variances ``sig2x`` and ``sig2y``, $\nu_1 = \mathcal{N}(x, \sigma_x^2)$ and $\nu_2 = \mathcal{N}(y, \sigma_x^2)$:
 
 $$\mathrm{KL}(\nu_1, \nu_2) = \frac{(x - y)^2}{2 \sigma_y^2} + \frac{1}{2}\left( \frac{\sigma_x^2}{\sigma_y^2} - 1 \log\left(\frac{\sigma_x^2}{\sigma_y^2}\right) \right).$$
 
@@ -293,7 +317,7 @@ See https://en.wikipedia.org/wiki/Normal_distribution#Other_properties
 
 - By default, sig2y is assumed to be sig2x (same variance).
 
-```jldoctest
+```julia
     julia> klGauss(3, 3)
     0.0
     julia> klGauss(3, 6)
@@ -310,7 +334,7 @@ See https://en.wikipedia.org/wiki/Normal_distribution#Other_properties
 
 - x, y can be negative:
 
-```jldoctest
+```julia
     julia> klGauss(-3, 2)
     50.0
     julia> klGauss(3, -2)
@@ -323,7 +347,7 @@ See https://en.wikipedia.org/wiki/Normal_distribution#Other_properties
 
 - With other values for `sig2x`:
 
-```jldoctest
+```julia
     julia> klGauss(3, 3, sig2x=10)
     0.0
     julia> klGauss(3, 6, sig2x=10)
@@ -340,7 +364,7 @@ See https://en.wikipedia.org/wiki/Normal_distribution#Other_properties
 
 - With different values for `sig2x` and `sig2y`:
 
-```jldoctest
+```julia
     julia> klGauss(0, 0, sig2x=0.25, sig2y=0.5)
     -0.0284...
     julia> klGauss(0, 0, sig2x=0.25, sig2y=1.0)
@@ -376,7 +400,10 @@ end
 
 # --- KL functions, for the KL-UCB policy
 
-doc""" The generic KL-UCB index computation.
+doc"""
+    function klucb(x, d, kl, upperbound, lowerbound=-Inf, precision=1e-6, max_iterations=50)
+
+The generic KL-UCB index computation.
 
 - x: value of the cum reward,
 - d: upper bound on the divergence,
@@ -389,7 +416,7 @@ doc""" The generic KL-UCB index computation.
 
 For example, for `klucbBern`, the two steps are to first compute an upperbound (as precise as possible) and the compute the kl-UCB index:
 
-```jldoctest
+```julia
     julia> x, d = 0.9, 0.2   # mean x, exploration term d
     julia> upperbound = min(1.0, klucbGauss(x, d, sig2x=0.25))  # variance 1/4 for [0,1] bounded distributions
     julia> upperbound
@@ -423,11 +450,14 @@ function klucb(x, d, kl, upperbound, lowerbound=-Inf, precision=1e-6, max_iterat
 end
 
 
-doc""" KL-UCB index computation for Bernoulli distributions, using `klucb`.
+doc"""
+    function klucbBern(x, d, precision=1e-6)
+
+KL-UCB index computation for Bernoulli distributions, using `klucb`.
 
 - Influence of x:
 
-```jldoctest
+```julia
     julia> klucbBern(0.1, 0.2)
     0.378391...
     julia> klucbBern(0.5, 0.2)
@@ -438,7 +468,7 @@ doc""" KL-UCB index computation for Bernoulli distributions, using `klucb`.
 
 - Influence of d:
 
-```jldoctest
+```julia
     julia> klucbBern(0.1, 0.4)
     0.519475...
     julia> klucbBern(0.1, 0.9)
@@ -462,7 +492,10 @@ function klucbBern(x, d, precision=1e-6)
 end
 
 
-doc""" KL-UCB index computation for Gaussian distributions.
+doc"""
+    function klucbGauss(x, d, sig2x=0.25, precision=0.0)
+
+KL-UCB index computation for Gaussian distributions.
 
 - **Note**: it does not require any search.
 
@@ -470,7 +503,7 @@ doc""" KL-UCB index computation for Gaussian distributions.
 
 - Influence of x:
 
-```jldoctest
+```julia
     julia> klucbGauss(0.1, 0.2)
     0.416227...
     julia> klucbGauss(0.5, 0.2)
@@ -480,7 +513,7 @@ doc""" KL-UCB index computation for Gaussian distributions.
 
 - Influence of d:
 
-```jldoctest
+```julia
     julia> klucbGauss(0.1, 0.4)
     0.547213...
     julia> klucbGauss(0.1, 0.9)
@@ -504,11 +537,14 @@ function klucbGauss(x, d, sig2x=0.25, precision=0.0)
 end
 
 
-doc""" KL-UCB index computation for Poisson distributions, using `klucb`.
+doc"""
+    function klucbPoisson(x, d, precision=1e-6)
+
+KL-UCB index computation for Poisson distributions, using `klucb`.
 
 - Influence of x:
 
-```jldoctest
+```julia
     julia> klucbPoisson(0.1, 0.2)
     0.450523...
     julia> klucbPoisson(0.5, 0.2)
@@ -519,7 +555,7 @@ doc""" KL-UCB index computation for Poisson distributions, using `klucb`.
 
 - Influence of d:
 
-```jldoctest
+```julia
     julia> klucbPoisson(0.1, 0.4)
     0.693684...
     julia> klucbPoisson(0.1, 0.9)
@@ -542,11 +578,14 @@ function klucbPoisson(x, d, precision=1e-6)
 end
 
 
-doc""" KL-UCB index computation for exponential distributions, using `klucb`.
+doc"""
+    function klucbExp(x, d, precision=1e-6)
+
+KL-UCB index computation for exponential distributions, using `klucb`.
 
 - Influence of x:
 
-```jldoctest
+```julia
     julia> klucbExp(0.1, 0.2)
     0.202741...
     julia> klucbExp(0.5, 0.2)
@@ -557,7 +596,7 @@ doc""" KL-UCB index computation for exponential distributions, using `klucb`.
 
 - Influence of d:
 
-```jldoctest
+```julia
     julia> klucbExp(0.1, 0.4)
     0.285792...
     julia> klucbExp(0.1, 0.9)
@@ -592,11 +631,14 @@ function klucbExp(x, d, precision=1e-6)
 end
 
 
-doc""" KL-UCB index computation for Gamma distributions, using `klucb`.
+doc"""
+    function klucbGamma(x, d, precision=1e-6)
+
+KL-UCB index computation for Gamma distributions, using `klucb`.
 
 - Influence of x:
 
-```jldoctest
+```julia
     julia> klucbGamma(0.1, 0.2)
     0.202...
     julia> klucbGamma(0.5, 0.2)
@@ -607,7 +649,7 @@ doc""" KL-UCB index computation for Gamma distributions, using `klucb`.
 
 - Influence of d:
 
-```jldoctest
+```julia
     julia> klucbGamma(0.1, 0.4)
     0.285...
     julia> klucbGamma(0.1, 0.9)
