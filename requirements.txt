@@ -1,0 +1,6 @@
+setuptools>=39
+distutils>=3.6
+numpy>=1.14
+numba>=0.37
+cython>=0.27
+Cython>=0.27

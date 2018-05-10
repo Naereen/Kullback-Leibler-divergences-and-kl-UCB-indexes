@@ -1,6 +1,26 @@
 #!/usr/bin/env julia
-# -*- coding: utf-8 -*-
-""" Kullback-Leibler divergence functions and klUCB utilities.
+doc""" Kullback-Leibler divergence functions and klUCB utilities, in naive Julia code.
+
+- How to use it? From Julia, it's easy:
+
+```
+    julia> using KullbackLeibler
+    julia> KullbackLeibler.klBern(0.5, 0.5)
+    0.0
+    julia> KullbackLeibler.klBern(0.1, 0.9)
+    1.757779...
+    julia> KullbackLeibler.klBern(0.9, 0.1)  # And this KL is symmetric
+    1.757779...
+    julia> KullbackLeibler.klBern(0.4, 0.5)
+    0.020135...
+    julia> KullbackLeibler.klBern(0.01, 0.99)
+    4.503217...
+```
+
+- Note: there is also a Python version, if you need.
+
+- MIT Licensed, (C) 2018 Lilian Besson (Naereen)
+  https://GitHub.com/Naereen/KullbackLeibler.jl
 
 - Cf. https://en.wikipedia.org/wiki/Kullback%E2%80%93Leibler_divergence
 - Reference: [Filippi, Cappé & Garivier - Allerton, 2011](https://arxiv.org/pdf/1004.5229.pdf) and [Garivier & Cappé, 2011](https://arxiv.org/pdf/1102.2490.pdf)
@@ -11,7 +31,7 @@ __version__ = "0.1"
 
 
 module KullbackLeibler
-export kullback_leibler
+export KullbackLeibler
 
 
 eps = 1e-15  #: Threshold value: everything in [0, 1] is truncated to [eps, 1 - eps]
@@ -386,15 +406,7 @@ For example, for `klucbBern`, the two steps are to first compute an upperbound (
 
 - **Note**: See below for more examples for different KL divergence functions.
 """
-function klucb(
-        x,
-        d,
-        kl,
-        upperbound,
-        lowerbound=-Inf,
-        precision=1e-6,
-        max_iterations=50
-    )
+function klucb(x, d, kl, upperbound, lowerbound=-Inf, precision=1e-6, max_iterations=50)
     value = max(x, lowerbound)
     u = upperbound
     _count_iteration = 0
