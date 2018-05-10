@@ -3,7 +3,7 @@ build/
 *.c
 *.pyc
 __pycache__
-*.html
 .ipynb_checkpoints/
 src/dist/
 *~
+Kullback-Leibler_divergences_in_native_Python__Cython_and_Numba.html

@@ -4,7 +4,7 @@
 
 - Faster implementation can be found in a C file, in the ``C`` folder, or a Cython file, and should be compiled to speedup computations.
 - Cf. https://en.wikipedia.org/wiki/Kullback%E2%80%93Leibler_divergence
-- Reference: [Filippi, Cappé & Garivier - Allerton, 2011](https://arxiv.org/pdf/1004.5229.pdf) and [Garivier & Cappé, 2011](https://arxiv.org/pdf/1102.2490.pdf)
+- Reference: [Filippi, Cappe & Garivier - Allerton, 2011](https://arxiv.org/pdf/1004.5229.pdf) and [Garivier & Cappe, 2011](https://arxiv.org/pdf/1102.2490.pdf)
 
 
 .. warning::
