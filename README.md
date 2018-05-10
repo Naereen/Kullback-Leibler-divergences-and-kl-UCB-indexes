@@ -10,18 +10,20 @@ The same module, with same functions and same specification, is available in dif
 3. A Cython version, using code very-close-to Python and the [Cython](http://docs.cython.org/en/latest/) compiler to automatically build a C version and compile it as a `.so` or `.dll` dynamically linked library to be imported as a module from Python, see [`kullback_leibler_cython.pyx`](src/kullback_leibler_cython.pyx),
 4. A C version, using the [C API](https://docs.python.org/3/c-api/) of CPython, which produces the same thing as the Cython version but is harder to read and work on, see [`kullback_leibler_c.c`](src/kullback_leibler_c.c).
 
-FIXME There is also a [Julia](http://julialang.org/) version, on [this repository](https://github.com/Naereen/KullbackLeibler.jl).
+There is also a [Julia](http://julialang.org/) version, on [this repository](https://github.com/Naereen/KullbackLeibler.jl).
 
 ## References
 - [Garivier & Cappé & Kaufmann, 2012](http://mloss.org/software/view/415/), for the pymaBandits project on which this implementation is based,
 - [Besson, 2018](https://github.com/SMPyBandits/SMPyBandits/), SMPyBandits project for improvements on the initial implementation,
 - [Filippi & Cappé & Garivier, 2011](https://arxiv.org/pdf/1004.5229.pdf),
 - [Garivier & Cappé, 2011](https://arxiv.org/pdf/1102.2490.pdf),
-- [Kullback & Leibler, XXX](XXX) for the first article introducing the so-called Kullback & Leibler divergences.
+- [Kullback & Leibler, 1951](http://www.jstor.org/stable/2236703) for the first article introducing the so-called Kullback & Leibler divergences.
 
 ## Examples
 ### Simple usage
 If the [`kullback_leibler.py`](src/kullback_leibler.py) file is accessible in your PATH or in Python's path:
+
+FIXME include real values!
 
 ```python
 >>> import kullback_leibler
@@ -64,8 +66,6 @@ array([2.42, 0.02, 1.62])
 
 ### Documentation
 See [this file](https://naereen.github.io/Kullback-Leibler-divergences-and-kl-UCB-indexes/doc/index.html).
-
-FIXME
 
 ### With the C extension
 If the [`kullback_leibler_c.so`](src/kullback_leibler_c.c) or  [`kullback_leibler_cython.so`](src/kullback_leibler_cython.pyx) file is accessible in your `PATH` or in Python's path:
@@ -117,8 +117,6 @@ The speedup is typically between ×50 and ×100.
 
 ## Demo on a [Jupyter notebook](https://www.Jupyter.org/)
 See this notebook: [on nbviewever](https://nbviewer.jupyter.org/github/Naereen/Kullback-Leibler-divergences-and-kl-UCB-indexes/blob/master/Kullback-Leibler_divergences_in_native_Python__Cython_and_Numba.ipynb), which also compares with the [Julia version](https://github.com/Naereen/KullbackLeibler.jl).
-
-FIXME write the julia version!
 
 ----
 
