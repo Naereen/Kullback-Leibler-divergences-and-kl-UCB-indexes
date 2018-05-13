@@ -4,7 +4,7 @@
 - Faster implementation can be found in a C file, in ``Policies/C``, and should be compiled to speedup computations.
 - However, the version here have examples, doctests.
 - Cf. https://en.wikipedia.org/wiki/Kullback%E2%80%93Leibler_divergence
-- Reference: [Filippi, Cappé & Garivier - Allerton, 2011](https://arxiv.org/pdf/1004.5229.pdf) and [Garivier & Cappé, 2011](https://arxiv.org/pdf/1102.2490.pdf)
+- Reference: [Filippi, Cappé & Garivier - Allerton, 2011](https://arxiv.org/pdf/1004.5229.pdf), [Garivier & Cappé, 2011](https://arxiv.org/pdf/1102.2490.pdf), and [Kullback & Leibler, 1951](http://www.jstor.org/stable/2236703).
 
 
 .. note::

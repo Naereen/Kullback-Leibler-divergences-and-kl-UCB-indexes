@@ -6,11 +6,11 @@ __version__ = "$Revision: 1.3 $"
 
 from distutils.core import setup, Extension
 
-module1 = Extension('kullback', sources=['kullback_py3.c'])
+module1 = Extension('kullback_leibler_c', sources=['kullback_leibler_c_py3.c'])
 
 
-setup(name='Kullback utilities',
+setup(name='Kullback-Leibler utilities',
       version='1.0',
-      description='computes various KL divergences',
+      description='Computes various KL divergences (Python 3)',
       ext_modules=[module1]
       )

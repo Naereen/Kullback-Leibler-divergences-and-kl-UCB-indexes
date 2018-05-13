@@ -32,7 +32,7 @@ setup(name='kullback_leibler',
     description='Fast implementation of various Kullback-Leibler divergences for 1D and 2D parametric distributions. Also provides optimized code for kl-UCB indexes',
     long_description=long_description,
     license='OSI Approved :: MIT License',
-    url="https://github.com/Naereen/Kullback-Leibler-divergences-and-kl-UCB-indexes"
+    url="https://github.com/Naereen/Kullback-Leibler-divergences-and-kl-UCB-indexes",
     classifiers=[
         'Intended Audience :: Science/Research',
         'License :: OSI Approved :: MIT License',

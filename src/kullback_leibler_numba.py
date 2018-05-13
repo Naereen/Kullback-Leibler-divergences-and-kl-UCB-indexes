@@ -5,7 +5,7 @@
 - Faster implementation can be found in a C file, in the ``C`` folder, or a Cython file, and should be compiled to speedup computations.
 - However, the version here have examples, doctests, and are jit compiled on the fly (with numba, cf. http://numba.pydata.org/).
 - Cf. https://en.wikipedia.org/wiki/Kullback%E2%80%93Leibler_divergence
-- Reference: [Filippi, Cappé & Garivier - Allerton, 2011](https://arxiv.org/pdf/1004.5229.pdf) and [Garivier & Cappé, 2011](https://arxiv.org/pdf/1102.2490.pdf)
+- Reference: [Filippi, Cappé & Garivier - Allerton, 2011](https://arxiv.org/pdf/1004.5229.pdf), [Garivier & Cappé, 2011](https://arxiv.org/pdf/1102.2490.pdf), and [Kullback & Leibler, 1951](http://www.jstor.org/stable/2236703).
 
 .. warning:: Using Numba does not always bring significant speedup! For instance, running the doctests in both version is way slower for the Numba version, as every jit compiled function need a warmup time before being effectively faster than the naive Python function. (Benchmark: 0.25s for naive version vs 3.5s for numba version)
 

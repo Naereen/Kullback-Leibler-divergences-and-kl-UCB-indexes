@@ -4,26 +4,39 @@
 - How to use it? From Julia, it's easy:
 
 ```
-    julia> using KullbackLeibler
-    julia> KullbackLeibler.klBern(0.5, 0.5)
-    0.0
-    julia> KullbackLeibler.klBern(0.1, 0.9)
-    1.757779...
-    julia> KullbackLeibler.klBern(0.9, 0.1)  # And this KL is symmetric
-    1.757779...
-    julia> KullbackLeibler.klBern(0.4, 0.5)
-    0.020135...
-    julia> KullbackLeibler.klBern(0.01, 0.99)
-    4.503217...
+julia> using KullbackLeibler
+julia> KullbackLeibler.klBern(0.5, 0.5)
+0.0
+julia> KullbackLeibler.klBern(0.1, 0.9)
+1.757779...
+julia> KullbackLeibler.klBern(0.9, 0.1)  # And this KL is symmetric
+1.757779...
+julia> KullbackLeibler.klBern(0.4, 0.5)
+0.020135...
+julia> KullbackLeibler.klBern(0.01, 0.99)
+4.503217...
 ```
 
-- Note: there is also a Python version, if you need.
+- You can also use it with the [`Distributions`](https://juliastats.github.io/Distributions.jl/) module:
 
-- MIT Licensed, (C) 2018 Lilian Besson (Naereen)
-  https://GitHub.com/Naereen/KullbackLeibler.jl
+```julia
+julia> using Distributions
+julia> Bern1 = Distributions.Bernoulli(0.33)
+Distributions.Bernoulli{Float64}(p=0.33)
+julia> Bern2 = Distributions.Bernoulli(0.42)
+Distributions.Bernoulli{Float64}(p=0.42)
+julia> ex_kl_1 = KL( Bern1, Bern2 )  # Calc KL divergence for Bernoulli R.V
+0.017063...
+julia> klBern(0.33, 0.42)  # same!
+0.017063...
+```
+
+- Note: there is also a Python version, if you need. (Cf. https://github.com/Naereen/Kullback-Leibler-divergences-and-kl-UCB-indexes/)
+
+- MIT Licensed, (C) 2018 Lilian Besson (Naereen), https://GitHub.com/Naereen/KullbackLeibler.jl
 
 - Cf. https://en.wikipedia.org/wiki/Kullback%E2%80%93Leibler_divergence
-- Reference: [Filippi, Cappé & Garivier - Allerton, 2011](https://arxiv.org/pdf/1004.5229.pdf) and [Garivier & Cappé, 2011](https://arxiv.org/pdf/1102.2490.pdf)
+- Reference: [Filippi, Cappé & Garivier - Allerton, 2011](https://arxiv.org/pdf/1004.5229.pdf), [Garivier & Cappé, 2011](https://arxiv.org/pdf/1102.2490.pdf), and [Kullback & Leibler, 1951](http://www.jstor.org/stable/2236703).
 """
 
 __author__ = "Lilian Besson"
@@ -34,7 +47,7 @@ __version__ = "0.1"
 module KullbackLeibler
 
 # List of exported functions
-export klBern, klBin, klPoisson, klExp, klGamma, klNegBin, klGauss, klucb, klucbBern, klucbGauss, klucbPoisson, klucbExp, klucbGamma
+export klBern, klBin, klPoisson, klExp, klGamma, klNegBin, klGauss, KL, klucb, klucbBern, klucbGauss, klucbPoisson, klucbExp, klucbGamma
 
 
 eps = 1e-15  #: Threshold value: everything in [0, 1] is truncated to [eps, 1 - eps]
@@ -51,23 +64,23 @@ Kullback-Leibler divergence for Bernoulli distributions. https://en.wikipedia.or
 $$\mathrm{KL}(\mathcal{B}(x), \mathcal{B}(y)) = x \log(\frac{x}{y}) + (1-x) \log(\frac{1-x}{1-y}).$$
 
 ```julia
-    julia> klBern(0.5, 0.5)
-    0.0
-    julia> klBern(0.1, 0.9)
-    1.757779...
-    julia> klBern(0.9, 0.1)  # And this KL is symmetric
-    1.757779...
-    julia> klBern(0.4, 0.5)
-    0.020135...
-    julia> klBern(0.01, 0.99)
-    4.503217...
+julia> klBern(0.5, 0.5)
+0.0
+julia> klBern(0.1, 0.9)
+1.757779...
+julia> klBern(0.9, 0.1)  # And this KL is symmetric
+1.757779...
+julia> klBern(0.4, 0.5)
+0.020135...
+julia> klBern(0.01, 0.99)
+4.503217...
 ```
 
 - Special values:
 
 ```julia
-    julia> klBern(0, 1)  # Should be +Inf, but 0 --> eps, 1 --> 1 - eps
-    34.539575...
+julia> klBern(0, 1)  # Should be +Inf, but 0 --> eps, 1 --> 1 - eps
+34.539575...
 ```
 """
 function klBern(x, y)
@@ -89,23 +102,23 @@ $$\mathrm{KL}(\mathrm{Bin}(x, n), \mathrm{Bin}(y, n)) = n \times \left(x \log(\f
 - **Warning**: The two distributions must have the same parameter n, and x, y are p, q in (0, 1).
 
 ```julia
-    julia> klBin(0.5, 0.5, 10)
-    0.0
-    julia> klBin(0.1, 0.9, 10)
-    17.57779...
-    julia> klBin(0.9, 0.1, 10)  # And this KL is symmetric
-    17.57779...
-    julia> klBin(0.4, 0.5, 10)
-    0.20135...
-    julia> klBin(0.01, 0.99, 10)
-    45.03217...
+julia> klBin(0.5, 0.5, 10)
+0.0
+julia> klBin(0.1, 0.9, 10)
+17.57779...
+julia> klBin(0.9, 0.1, 10)  # And this KL is symmetric
+17.57779...
+julia> klBin(0.4, 0.5, 10)
+0.20135...
+julia> klBin(0.01, 0.99, 10)
+45.03217...
 ```
 
 - Special values:
 
 ```julia
-    julia> klBin(0, 1, 10)  # Should be +Inf, but 0 --> eps, 1 --> 1 - eps
-    345.39575...
+julia> klBin(0, 1, 10)  # Should be +Inf, but 0 --> eps, 1 --> 1 - eps
+345.39575...
 ```
 """
 function klBin(x, y, n)
@@ -123,25 +136,25 @@ Kullback-Leibler divergence for Poison distributions. https://en.wikipedia.org/w
 $$\mathrm{KL}(\mathrm{Poisson}(x), \mathrm{Poisson}(y)) = y - x + x \times \log(\frac{x}{y}).$$
 
 ```julia
-    julia> klPoisson(3, 3)
-    0.0
-    julia> klPoisson(2, 1)
-    0.386294...
-    julia> klPoisson(1, 2)  # And this KL is non-symmetric
-    0.306852...
-    julia> klPoisson(3, 6)
-    0.920558...
-    julia> klPoisson(6, 8)
-    0.273907...
+julia> klPoisson(3, 3)
+0.0
+julia> klPoisson(2, 1)
+0.386294...
+julia> klPoisson(1, 2)  # And this KL is non-symmetric
+0.306852...
+julia> klPoisson(3, 6)
+0.920558...
+julia> klPoisson(6, 8)
+0.273907...
 ```
 
 - Special values:
 
 ```julia
-    julia> klPoisson(1, 0)  # Should be +Inf, but 0 --> eps, 1 --> 1 - eps
-    33.538776...
-    julia> klPoisson(0, 0)
-    0.0
+julia> klPoisson(1, 0)  # Should be +Inf, but 0 --> eps, 1 --> 1 - eps
+33.538776...
+julia> klPoisson(0, 0)
+0.0
 ```
 """
 function klPoisson(x, y)
@@ -156,37 +169,35 @@ doc"""
 
 Kullback-Leibler divergence for exponential distributions. https://en.wikipedia.org/wiki/Exponential_distribution#Kullback.E2.80.93Leibler_divergence
 
-.. math::
-
-    \mathrm{KL}(\mathrm{Exp}(x), \mathrm{Exp}(y)) = \begin{cases}
-    \frac{x}{y} - 1 - \log(\frac{x}{y}) & \text{if} x > 0, y > 0\\
-    +\infty & \text{otherwise}
-    \end{cases}
+$$\mathrm{KL}(\mathrm{Exp}(x), \mathrm{Exp}(y)) = \begin{cases}
+\frac{x}{y} - 1 - \log(\frac{x}{y}) & \text{if} x > 0, y > 0\\
++\infty & \text{otherwise}
+\end{cases}$$
 
 ```julia
-    julia> klExp(3, 3)
-    0.0
-    julia> klExp(3, 6)
-    0.193147...
-    julia> klExp(1, 2)  # Only the proportion between x and y is used
-    0.193147...
-    julia> klExp(2, 1)  # And this KL is non-symmetric
-    0.306852...
-    julia> klExp(4, 2)  # Only the proportion between x and y is used
-    0.306852...
-    julia> klExp(6, 8)
-    0.037682...
+julia> klExp(3, 3)
+0.0
+julia> klExp(3, 6)
+0.193147...
+julia> klExp(1, 2)  # Only the proportion between x and y is used
+0.193147...
+julia> klExp(2, 1)  # And this KL is non-symmetric
+0.306852...
+julia> klExp(4, 2)  # Only the proportion between x and y is used
+0.306852...
+julia> klExp(6, 8)
+0.037682...
 ```
 
 - x, y have to be positive:
 
 ```julia
-    julia> klExp(-3, 2)
-    Inf
-    julia> klExp(3, -2)
-    Inf
-    julia> klExp(-3, -2)
-    Inf
+julia> klExp(-3, 2)
+Inf
+julia> klExp(3, -2)
+Inf
+julia> klExp(-3, -2)
+Inf
 ```
 """
 function klExp(x, y)
@@ -217,29 +228,29 @@ Kullback-Leibler divergence for gamma distributions. https://en.wikipedia.org/wi
 - **Warning**: The two distributions must have the same parameter a.
 
 ```julia
-    julia> klGamma(3, 3)
-    0.0
-    julia> klGamma(3, 6)
-    0.193147...
-    julia> klGamma(1, 2)  # Only the proportion between x and y is used
-    0.193147...
-    julia> klGamma(2, 1)  # And this KL is non-symmetric
-    0.306852...
-    julia> klGamma(4, 2)  # Only the proportion between x and y is used
-    0.306852...
-    julia> klGamma(6, 8)
-    0.037682...
+julia> klGamma(3, 3)
+0.0
+julia> klGamma(3, 6)
+0.193147...
+julia> klGamma(1, 2)  # Only the proportion between x and y is used
+0.193147...
+julia> klGamma(2, 1)  # And this KL is non-symmetric
+0.306852...
+julia> klGamma(4, 2)  # Only the proportion between x and y is used
+0.306852...
+julia> klGamma(6, 8)
+0.037682...
 ```
 
 - x, y have to be positive:
 
 ```julia
-    julia> klGamma(-3, 2)
-    Inf
-    julia> klGamma(3, -2)
-    Inf
-    julia> klGamma(-3, -2)
-    Inf
+julia> klGamma(-3, 2)
+Inf
+julia> klGamma(3, -2)
+Inf
+julia> klGamma(-3, -2)
+Inf
 ```
 """
 function klGamma(x, y, a=1)
@@ -263,40 +274,40 @@ $$\mathrm{KL}(\mathrm{NegBin}(x, r), \mathrm{NegBin}(y, r)) = r \times \log((r +
 - **Warning**: The two distributions must have the same parameter r.
 
 ```julia
-    julia> klNegBin(0.5, 0.5)
-    0.0
-    julia> klNegBin(0.1, 0.9)
-    -0.711611...
-    julia> klNegBin(0.9, 0.1)  # And this KL is non-symmetric
-    2.0321564...
-    julia> klNegBin(0.4, 0.5)
-    -0.130653...
-    julia> klNegBin(0.01, 0.99)
-    -0.717353...
+julia> klNegBin(0.5, 0.5)
+0.0
+julia> klNegBin(0.1, 0.9)
+-0.711611...
+julia> klNegBin(0.9, 0.1)  # And this KL is non-symmetric
+2.0321564...
+julia> klNegBin(0.4, 0.5)
+-0.130653...
+julia> klNegBin(0.01, 0.99)
+-0.717353...
 ```
 
 - Special values:
 
 ```julia
-    julia> klBern(0, 1)  # Should be +Inf, but 0 --> eps, 1 --> 1 - eps
+julia> klBern(0, 1)  # Should be +Inf, but 0 --> eps, 1 --> 1 - eps
     34.539575...
 ```
 
 - With other values for `r`:
 
 ```julia
-    julia> klNegBin(0.5, 0.5, r=2)
-    0.0
-    julia> klNegBin(0.1, 0.9, r=2)
-    -0.832991...
-    julia> klNegBin(0.1, 0.9, r=4)
-    -0.914890...
-    julia> klNegBin(0.9, 0.1, r=2)  # And this KL is non-symmetric
-    2.3325528...
-    julia> klNegBin(0.4, 0.5, r=2)
-    -0.154572...
-    julia> klNegBin(0.01, 0.99, r=2)
-    -0.836257...
+julia> klNegBin(0.5, 0.5, r=2)
+0.0
+julia> klNegBin(0.1, 0.9, r=2)
+-0.832991...
+julia> klNegBin(0.1, 0.9, r=4)
+-0.914890...
+julia> klNegBin(0.9, 0.1, r=2)  # And this KL is non-symmetric
+2.3325528...
+julia> klNegBin(0.4, 0.5, r=2)
+-0.154572...
+julia> klNegBin(0.01, 0.99, r=2)
+-0.836257...
 ```
 """
 function klNegBin(x, y, r=1)
@@ -318,76 +329,76 @@ See https://en.wikipedia.org/wiki/Normal_distribution#Other_properties
 - By default, sig2y is assumed to be sig2x (same variance).
 
 ```julia
-    julia> klGauss(3, 3)
-    0.0
-    julia> klGauss(3, 6)
-    18.0
-    julia> klGauss(1, 2)
-    2.0
-    julia> klGauss(2, 1)  # And this KL is symmetric
-    2.0
-    julia> klGauss(4, 2)
-    8.0
-    julia> klGauss(6, 8)
-    8.0
+julia> klGauss(3, 3)
+0.0
+julia> klGauss(3, 6)
+18.0
+julia> klGauss(1, 2)
+2.0
+julia> klGauss(2, 1)  # And this KL is symmetric
+2.0
+julia> klGauss(4, 2)
+8.0
+julia> klGauss(6, 8)
+8.0
 ```
 
 - x, y can be negative:
 
 ```julia
-    julia> klGauss(-3, 2)
-    50.0
-    julia> klGauss(3, -2)
-    50.0
-    julia> klGauss(-3, -2)
-    2.0
-    julia> klGauss(3, 2)
-    2.0
+julia> klGauss(-3, 2)
+50.0
+julia> klGauss(3, -2)
+50.0
+julia> klGauss(-3, -2)
+2.0
+julia> klGauss(3, 2)
+2.0
 ```
 
 - With other values for `sig2x`:
 
 ```julia
-    julia> klGauss(3, 3, sig2x=10)
-    0.0
-    julia> klGauss(3, 6, sig2x=10)
-    0.45
-    julia> klGauss(1, 2, sig2x=10)
-    0.05
-    julia> klGauss(2, 1, sig2x=10)  # And this KL is symmetric
-    0.05
-    julia> klGauss(4, 2, sig2x=10)
-    0.2
-    julia> klGauss(6, 8, sig2x=10)
-    0.2
+julia> klGauss(3, 3, sig2x=10)
+0.0
+julia> klGauss(3, 6, sig2x=10)
+0.45
+julia> klGauss(1, 2, sig2x=10)
+0.05
+julia> klGauss(2, 1, sig2x=10)  # And this KL is symmetric
+0.05
+julia> klGauss(4, 2, sig2x=10)
+0.2
+julia> klGauss(6, 8, sig2x=10)
+0.2
 ```
 
 - With different values for `sig2x` and `sig2y`:
 
 ```julia
-    julia> klGauss(0, 0, sig2x=0.25, sig2y=0.5)
-    -0.0284...
-    julia> klGauss(0, 0, sig2x=0.25, sig2y=1.0)
-    0.2243...
-    julia> klGauss(0, 0, sig2x=0.5, sig2y=0.25)  # not symmetric here!
-    1.1534...
+julia> klGauss(0, 0, sig2x=0.25, sig2y=0.5)
+-0.0284...
+julia> klGauss(0, 0, sig2x=0.25, sig2y=1.0)
+0.2243...
+julia> klGauss(0, 0, sig2x=0.5, sig2y=0.25)  # not symmetric here!
+1.1534...
 
-    julia> klGauss(0, 1, sig2x=0.25, sig2y=0.5)
-    0.9715...
-    julia> klGauss(0, 1, sig2x=0.25, sig2y=1.0)
-    0.7243...
-    julia> klGauss(0, 1, sig2x=0.5, sig2y=0.25)  # not symmetric here!
-    3.1534...
+julia> klGauss(0, 1, sig2x=0.25, sig2y=0.5)
+0.9715...
+julia> klGauss(0, 1, sig2x=0.25, sig2y=1.0)
+0.7243...
+julia> klGauss(0, 1, sig2x=0.5, sig2y=0.25)  # not symmetric here!
+3.1534...
 
-    julia> klGauss(1, 0, sig2x=0.25, sig2y=0.5)
-    0.9715...
-    julia> klGauss(1, 0, sig2x=0.25, sig2y=1.0)
-    0.7243...
-    julia> klGauss(1, 0, sig2x=0.5, sig2y=0.25)  # not symmetric here!
-    3.1534...
+julia> klGauss(1, 0, sig2x=0.25, sig2y=0.5)
+0.9715...
+julia> klGauss(1, 0, sig2x=0.25, sig2y=1.0)
+0.7243...
+julia> klGauss(1, 0, sig2x=0.5, sig2y=0.25)  # not symmetric here!
+3.1534...
 ```
 
-- **Warning:** Using :class:`Policies.klUCB` (and variants) with `klGauss` is equivalent to use :class:`Policies.UCB`, so prefer the simpler version.
+- **Warning:** Using [`Policies.klUCB`](https://smpybandits.github.io/docs/Policies.klUCB.html) (and variants) with `klGauss` is equivalent to use [`Policies.UCB`](https://smpybandits.github.io/docs/Policies.UCB.html), so prefer the simpler version. (**this is only for the Python version**)
 """
 function klGauss(x, y, sig2x=0.25, sig2y=0.25)
     if - eps < (sig2y - sig2x) < eps
@@ -398,12 +409,133 @@ function klGauss(x, y, sig2x=0.25, sig2y=0.25)
 end
 
 
-# --- KL functions, for the KL-UCB policy
+# --- generic KL divergence functions for Distributions
+# See https://github.com/Naereen/KullbackLeibler.jl/issues/2
+
+using Distributions
+
+doc"""
+    function KL( D1, D2 )
+
+Common function to compute the Kullback-Leibler for some continuous and discrete 1D parametric distributions (of module Distributions).
+
+See [doc for continuous distributions](https://juliastats.github.io/Distributions.jl/latest/univariate.html#Continuous-Distributions-1) and [doc for discrete distributions](https://juliastats.github.io/Distributions.jl/latest/univariate.html#Discrete-Distributions-1).
+
+Currently supported: `Bernoulli`, `Binomial`, `Poisson`, `NegativeBinomial` (discrete) and `Exponential`, `Gamma`, `Gaussian` (continuous).
+
+Examples:
+
+- Bernoulli:
+```julia
+julia> Bern1 = Distributions.Bernoulli(0.33)
+Distributions.Bernoulli{Float64}(p=0.33)
+julia> Bern2 = Distributions.Bernoulli(0.42)
+Distributions.Bernoulli{Float64}(p=0.42)
+julia> ex_kl_1 = KL( Bern1, Bern2 )  # Calc KL divergence for Bernoulli R.V
+0.017063...
+julia> klBern(0.33, 0.42)  # same!
+0.017063...
+```
+
+- Binomial:
+```julia
+julia> Bin1 = Distributions.Binomial(13, 0.33)
+Distributions.Binomial{Float64}(n=13, p=0.33)
+julia> Bin2 = Distributions.Binomial(13, 0.42)   # must have same parameter n
+Distributions.Binomial{Float64}(n=13, p=0.42)
+julia> ex_kl_2 = KL( Bin1, Bin2 )  # Calc KL divergence for Binomial R.V
+0.221828...
+```
+
+- Poisson:
+```julia
+julia> Pois1 = Distributions.Poisson(0.33)
+Distributions.Poisson{Float64}(λ=0.33)
+julia> Pois2 = Distributions.Poisson(0.92)
+Distributions.Poisson{Float64}(λ=0.92)
+julia> ex_kl_3 = KL( Pois1, Pois2 )  # Calc KL divergence for Poisson R.V
+0.251657
+```
+
+- Exponential:
+```julia
+julia> Exp1 = Distributions.Exponential( 0.33 )
+Distributions.Exponential{Float64}(θ=0.33)
+julia> Exp2 = Distributions.Exponential( 0.42 )
+Distributions.Exponential{Float64}(θ=0.42)
+julia> ex_kl_4 = KL( Exp1, Exp2 )  # Calc KL div for Exponential R.V
+0.0268763
+```
+
+- Gamma:
+```julia
+julia> Gam1 = Distributions.Gamma(0.5, 0.33)
+Distributions.Gamma{Float64}(α=0.5, θ=0.33)
+julia> Gam2 = Distributions.Gamma(0.5, 0.42)     # must have same parameter α
+Distributions.Gamma{Float64}(α=0.5, θ=0.42)
+julia> ex_kl_5 = KL( Gam1, Gam2 )  # Calc KL divergence for Gamma R.V
+0.0134381
+```
+
+- NegativeBinomial:
+```julia
+julia> NegBin1 = Distributions.NegativeBinomial(40, 0.33)
+Distributions.NegativeBinomial{Float64}(r=40, p=0.33)
+julia> NegBin2 = Distributions.NegativeBinomial(40, 0.99)  # must have same parameter r
+Distributions.NegativeBinomial{Float64}(r=40, p=0.99)
+julia> ex_kl_6 = KL( NegBin1, NegBin2 )       # Calc KL divergence for NegativeBinomial R.V
+17.277824
+```
+
+- Gaussian:
+```julia
+julia> Gauss1 = Distributions.Gaussian(0.33, 1)
+Distributions.Normal{Float64}(μ=0.33, σ=1.0)
+julia> Gauss2 = Distributions.Gaussian(0.42, 1)      # can have same σ
+Distributions.Normal{Float64}(μ=0.42, σ=1.0)
+julia> ex_kl_7 = KL( Gauss1, Gauss2 )  # Calc KL divergence for Gaussian R.V
+0.0040499...
+
+julia> Gauss3 = Distributions.Gaussian(0.42, 10)     # but can also have a different σ
+Distributions.Normal{Float64}(μ=0.33, σ=10.0)
+julia> ex_kl_7 = KL( Gauss1, Gauss3 )  # Calc KL divergence for Gaussian R.V
+0.656697...
+```
+"""
+function KL(D1, D2)
+    throw(ErrorException("Unsupported distributions D1 or D2. Only Bernoulli, Binomial, Poisson, Exponential, Gamma, NegativeBinomial, Gaussian are supported."))
+end
+
+KL( D1::Distributions.Bernoulli, D2::Distributions.Bernoulli ) = klBern( D1.p, D2.p )
+
+function KL( D1::Distributions.Binomial, D2::Distributions.Binomial )
+    assert(D1.n == D2.n)
+    return klBin( D1.p, D2.p, D1.n )
+end
+
+KL( D1::Distributions.Poisson, D2::Distributions.Poisson ) = klPoisson( D1.λ, D2.λ )
+
+KL( D1::Distributions.Exponential, D2::Distributions.Exponential ) = klExp( D1.θ, D2.θ )
+
+function KL( D1::Distributions.Gamma, D2::Distributions.Gamma )
+    assert(D1.α == D2.α)
+    return klGamma( D1.θ, D2.θ, D1.α )
+end
+
+function KL( D1::Distributions.NegativeBinomial, D2::Distributions.NegativeBinomial )
+    assert(D1.r == D2.r)
+    return klGamma( D1.p, D2.p, D1.r )
+end
+
+KL( D1::Distributions.Gaussian, D2::Distributions.Gaussian ) = klGauss( D1.μ, D2.μ, D1.σ, D2.σ )
+
+
+# --- klucb functions, for the kl-UCB policy
 
 doc"""
     function klucb(x, d, kl, upperbound, lowerbound=-Inf, precision=1e-6, max_iterations=50)
 
-The generic KL-UCB index computation.
+The generic kl-UCB index computation.
 
 - x: value of the cum reward,
 - d: upper bound on the divergence,
@@ -417,18 +549,18 @@ The generic KL-UCB index computation.
 For example, for `klucbBern`, the two steps are to first compute an upperbound (as precise as possible) and the compute the kl-UCB index:
 
 ```julia
-    julia> x, d = 0.9, 0.2   # mean x, exploration term d
-    julia> upperbound = min(1.0, klucbGauss(x, d, sig2x=0.25))  # variance 1/4 for [0,1] bounded distributions
-    julia> upperbound
-    1.0
-    julia> klucb(x, d, klBern, upperbound, lowerbound=0, precision=1e-3, max_iterations=10)
-    0.9941...
-    julia> klucb(x, d, klBern, upperbound, lowerbound=0, precision=1e-6, max_iterations=10)
-    0.994482...
-    julia> klucb(x, d, klBern, upperbound, lowerbound=0, precision=1e-3, max_iterations=50)
-    0.9941...
-    julia> klucb(x, d, klBern, upperbound, lowerbound=0, precision=1e-6, max_iterations=100)  # more and more precise!
-    0.994489...
+julia> x, d = 0.9, 0.2   # mean x, exploration term d
+julia> upperbound = min(1.0, klucbGauss(x, d, sig2x=0.25))  # variance 1/4 for [0,1] bounded distributions
+julia> upperbound
+1.0
+julia> klucb(x, d, klBern, upperbound, lowerbound=0, precision=1e-3, max_iterations=10)
+0.9941...
+julia> klucb(x, d, klBern, upperbound, lowerbound=0, precision=1e-6, max_iterations=10)
+0.994482...
+julia> klucb(x, d, klBern, upperbound, lowerbound=0, precision=1e-3, max_iterations=50)
+0.9941...
+julia> klucb(x, d, klBern, upperbound, lowerbound=0, precision=1e-6, max_iterations=100)  # more and more precise!
+0.994489...
 ```
 
 - **Note**: See below for more examples for different KL divergence functions.
@@ -453,36 +585,36 @@ end
 doc"""
     function klucbBern(x, d, precision=1e-6)
 
-KL-UCB index computation for Bernoulli distributions, using `klucb`.
+kl-UCB index computation for Bernoulli distributions, using `klucb`.
 
 - Influence of x:
 
 ```julia
-    julia> klucbBern(0.1, 0.2)
-    0.378391...
-    julia> klucbBern(0.5, 0.2)
-    0.787088...
-    julia> klucbBern(0.9, 0.2)
-    0.994489...
+julia> klucbBern(0.1, 0.2)
+0.378391...
+julia> klucbBern(0.5, 0.2)
+0.787088...
+julia> klucbBern(0.9, 0.2)
+0.994489...
 ```
 
 - Influence of d:
 
 ```julia
-    julia> klucbBern(0.1, 0.4)
-    0.519475...
-    julia> klucbBern(0.1, 0.9)
-    0.734714...
+julia> klucbBern(0.1, 0.4)
+0.519475...
+julia> klucbBern(0.1, 0.9)
+0.734714...
 
-    julia> klucbBern(0.5, 0.4)
-    0.871035...
-    julia> klucbBern(0.5, 0.9)
-    0.956809...
+julia> klucbBern(0.5, 0.4)
+0.871035...
+julia> klucbBern(0.5, 0.9)
+0.956809...
 
-    julia> klucbBern(0.9, 0.4)
-    0.999285...
-    julia> klucbBern(0.9, 0.9)
-    0.999995...
+julia> klucbBern(0.9, 0.4)
+0.999285...
+julia> klucbBern(0.9, 0.9)
+0.999995...
 ```
 """
 function klucbBern(x, d, precision=1e-6)
@@ -495,7 +627,7 @@ end
 doc"""
     function klucbGauss(x, d, sig2x=0.25, precision=0.0)
 
-KL-UCB index computation for Gaussian distributions.
+kl-UCB index computation for Gaussian distributions.
 
 - **Note**: it does not require any search.
 
@@ -504,33 +636,33 @@ KL-UCB index computation for Gaussian distributions.
 - Influence of x:
 
 ```julia
-    julia> klucbGauss(0.1, 0.2)
-    0.416227...
-    julia> klucbGauss(0.5, 0.2)
-    0.816227...
-    julia> klucbGauss(0.9, 0.2)
-    1.216227...
+julia> klucbGauss(0.1, 0.2)
+0.416227...
+julia> klucbGauss(0.5, 0.2)
+0.816227...
+julia> klucbGauss(0.9, 0.2)
+1.216227...
 
 - Influence of d:
 
 ```julia
-    julia> klucbGauss(0.1, 0.4)
-    0.547213...
-    julia> klucbGauss(0.1, 0.9)
-    0.770820...
+julia> klucbGauss(0.1, 0.4)
+0.547213...
+julia> klucbGauss(0.1, 0.9)
+0.770820...
 
-    julia> klucbGauss(0.5, 0.4)
-    0.947213...
-    julia> klucbGauss(0.5, 0.9)
-    1.170820...
+julia> klucbGauss(0.5, 0.4)
+0.947213...
+julia> klucbGauss(0.5, 0.9)
+1.170820...
 
-    julia> klucbGauss(0.9, 0.4)
-    1.347213...
-    julia> klucbGauss(0.9, 0.9)
-    1.570820...
+julia> klucbGauss(0.9, 0.4)
+1.347213...
+julia> klucbGauss(0.9, 0.9)
+1.570820...
 ```
 
-- **Warning**: Using :class:`Policies.klUCB` (and variants) with `klucbGauss` is equivalent to use :class:`Policies.UCB`, so prefer the simpler version.
+- **Warning**: Using [`Policies.klUCB`](https://smpybandits.github.io/docs/Policies.klUCB.html) (and variants) with `klucbGauss` is equivalent to use [`Policies.UCB`](https://smpybandits.github.io/docs/Policies.UCB.html), so prefer the simpler version (**this is only for the Python version**).
 """
 function klucbGauss(x, d, sig2x=0.25, precision=0.0)
     return x + sqrt(2 * sig2x * d)
@@ -540,36 +672,36 @@ end
 doc"""
     function klucbPoisson(x, d, precision=1e-6)
 
-KL-UCB index computation for Poisson distributions, using `klucb`.
+kl-UCB index computation for Poisson distributions, using `klucb`.
 
 - Influence of x:
 
 ```julia
-    julia> klucbPoisson(0.1, 0.2)
-    0.450523...
-    julia> klucbPoisson(0.5, 0.2)
-    1.089376...
-    julia> klucbPoisson(0.9, 0.2)
-    1.640112...
+julia> klucbPoisson(0.1, 0.2)
+0.450523...
+julia> klucbPoisson(0.5, 0.2)
+1.089376...
+julia> klucbPoisson(0.9, 0.2)
+1.640112...
 ```
 
 - Influence of d:
 
 ```julia
-    julia> klucbPoisson(0.1, 0.4)
-    0.693684...
-    julia> klucbPoisson(0.1, 0.9)
-    1.252796...
+julia> klucbPoisson(0.1, 0.4)
+0.693684...
+julia> klucbPoisson(0.1, 0.9)
+1.252796...
 
-    julia> klucbPoisson(0.5, 0.4)
-    1.422933...
-    julia> klucbPoisson(0.5, 0.9)
-    2.122985...
+julia> klucbPoisson(0.5, 0.4)
+1.422933...
+julia> klucbPoisson(0.5, 0.9)
+2.122985...
 
-    julia> klucbPoisson(0.9, 0.4)
-    2.033691...
-    julia> klucbPoisson(0.9, 0.9)
-    2.831573...
+julia> klucbPoisson(0.9, 0.4)
+2.033691...
+julia> klucbPoisson(0.9, 0.9)
+2.831573...
 ```
 """
 function klucbPoisson(x, d, precision=1e-6)
@@ -581,36 +713,36 @@ end
 doc"""
     function klucbExp(x, d, precision=1e-6)
 
-KL-UCB index computation for exponential distributions, using `klucb`.
+kl-UCB index computation for exponential distributions, using `klucb`.
 
 - Influence of x:
 
 ```julia
-    julia> klucbExp(0.1, 0.2)
-    0.202741...
-    julia> klucbExp(0.5, 0.2)
-    1.013706...
-    julia> klucbExp(0.9, 0.2)
-    1.824671...
+julia> klucbExp(0.1, 0.2)
+0.202741...
+julia> klucbExp(0.5, 0.2)
+1.013706...
+julia> klucbExp(0.9, 0.2)
+1.824671...
 ```
 
 - Influence of d:
 
 ```julia
-    julia> klucbExp(0.1, 0.4)
-    0.285792...
-    julia> klucbExp(0.1, 0.9)
-    0.559088...
+julia> klucbExp(0.1, 0.4)
+0.285792...
+julia> klucbExp(0.1, 0.9)
+0.559088...
 
-    julia> klucbExp(0.5, 0.4)
-    1.428962...
-    julia> klucbExp(0.5, 0.9)
-    2.795442...
+julia> klucbExp(0.5, 0.4)
+1.428962...
+julia> klucbExp(0.5, 0.9)
+2.795442...
 
-    julia> klucbExp(0.9, 0.4)
-    2.572132...
-    julia> klucbExp(0.9, 0.9)
-    5.031795...
+julia> klucbExp(0.9, 0.4)
+2.572132...
+julia> klucbExp(0.9, 0.9)
+5.031795...
 ```
 """
 function klucbExp(x, d, precision=1e-6)
@@ -634,36 +766,36 @@ end
 doc"""
     function klucbGamma(x, d, precision=1e-6)
 
-KL-UCB index computation for Gamma distributions, using `klucb`.
+kl-UCB index computation for Gamma distributions, using `klucb`.
 
 - Influence of x:
 
 ```julia
-    julia> klucbGamma(0.1, 0.2)
-    0.202...
-    julia> klucbGamma(0.5, 0.2)
-    1.013...
-    julia> klucbGamma(0.9, 0.2)
-    1.824...
+julia> klucbGamma(0.1, 0.2)
+0.202...
+julia> klucbGamma(0.5, 0.2)
+1.013...
+julia> klucbGamma(0.9, 0.2)
+1.824...
 ```
 
 - Influence of d:
 
 ```julia
-    julia> klucbGamma(0.1, 0.4)
-    0.285...
-    julia> klucbGamma(0.1, 0.9)
-    0.559...
+julia> klucbGamma(0.1, 0.4)
+0.285...
+julia> klucbGamma(0.1, 0.9)
+0.559...
 
-    julia> klucbGamma(0.5, 0.4)
-    1.428...
-    julia> klucbGamma(0.5, 0.9)
-    2.795...
+julia> klucbGamma(0.5, 0.4)
+1.428...
+julia> klucbGamma(0.5, 0.9)
+2.795...
 
-    julia> klucbGamma(0.9, 0.4)
-    2.572...
-    julia> klucbGamma(0.9, 0.9)
-    5.031...
+julia> klucbGamma(0.9, 0.4)
+2.572...
+julia> klucbGamma(0.9, 0.9)
+5.031...
 ```
 """# FIXME this one is wrong!
 function klucbGamma(x, d, precision=1e-6)

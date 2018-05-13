@@ -1,240 +1,274 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Documentation · KullbackLeibler.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="assets/documenter.js"></script><script src="siteinfo.js"></script><script src="../versions.js"></script><link href="assets/documenter.css" rel="stylesheet" type="text/css"/></head><body><nav class="toc"><h1>KullbackLeibler.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" id="search-form" action="search.html"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li class="current"><a class="toctext" href="index.html">Documentation</a><ul class="internal"><li><a class="toctext" href="#Functions-1">Functions</a></li><li><a class="toctext" href="#Index-1">Index</a></li></ul></li></ul></nav><article id="docs"><header><nav><ul><li><a href="index.html">Documentation</a></li></ul><a class="edit-page" href="https://github.com/Naereen/Kullback-Leibler-divergences-and-kl-UCB-indexes/blob/master/julia-generate-docs/src/index.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/><div id="topbar"><span>Documentation</span><a class="fa fa-bars" href="#"></a></div></header><h1><a class="nav-anchor" id="Documentation-1" href="#Documentation-1">Documentation</a></h1><ul><li><a href="index.html#Documentation-1">Documentation</a></li><ul><li><a href="index.html#Functions-1">Functions</a></li><li><a href="index.html#Index-1">Index</a></li></ul></ul><h2><a class="nav-anchor" id="Functions-1" href="#Functions-1">Functions</a></h2><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="KullbackLeibler.klBern-Tuple{Any,Any}" href="#KullbackLeibler.klBern-Tuple{Any,Any}"><code>KullbackLeibler.klBern</code></a> — <span class="docstring-category">Method</span>.</div><div><pre><code class="language-none">function klBern(x, y)</code></pre><p>Kullback-Leibler divergence for Bernoulli distributions. https://en.wikipedia.org/wiki/Bernoulli_distribution#Kullback.E2.80.93Leibler_divergence</p><div>\[\mathrm{KL}(\mathcal{B}(x), \mathcal{B}(y)) = x \log(\frac{x}{y}) + (1-x) \log(\frac{1-x}{1-y}).\]</div><pre><code class="language-julia">    julia&gt; klBern(0.5, 0.5)
-    0.0
-    julia&gt; klBern(0.1, 0.9)
-    1.757779...
-    julia&gt; klBern(0.9, 0.1)  # And this KL is symmetric
-    1.757779...
-    julia&gt; klBern(0.4, 0.5)
-    0.020135...
-    julia&gt; klBern(0.01, 0.99)
-    4.503217...</code></pre><ul><li><p>Special values:</p></li></ul><pre><code class="language-julia">    julia&gt; klBern(0, 1)  # Should be +Inf, but 0 --&gt; eps, 1 --&gt; 1 - eps
-    34.539575...</code></pre></div><a class="source-link" target="_blank" href="https://github.com/Naereen/Kullback-Leibler-divergences-and-kl-UCB-indexes/blob/6a58c67731a75090822d0fe16bfade506259cc82/julia-src/KullbackLeibler.jl#L46">source</a></section><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="KullbackLeibler.klBin-Tuple{Any,Any,Any}" href="#KullbackLeibler.klBin-Tuple{Any,Any,Any}"><code>KullbackLeibler.klBin</code></a> — <span class="docstring-category">Method</span>.</div><div><pre><code class="language-none">function klBin(x, y, n)</code></pre><p>Kullback-Leibler divergence for Binomial distributions. https://math.stackexchange.com/questions/320399/kullback-leibner-divergence-of-binomial-distributions</p><ul><li><p>It is simply the n times <code>klBern</code> on x and y.</p></li></ul><div>\[\mathrm{KL}(\mathrm{Bin}(x, n), \mathrm{Bin}(y, n)) = n \times \left(x \log(\frac{x}{y}) + (1-x) \log(\frac{1-x}{1-y}) \right).\]</div><ul><li><p><strong>Warning</strong>: The two distributions must have the same parameter n, and x, y are p, q in (0, 1).</p></li></ul><pre><code class="language-julia">    julia&gt; klBin(0.5, 0.5, 10)
-    0.0
-    julia&gt; klBin(0.1, 0.9, 10)
-    17.57779...
-    julia&gt; klBin(0.9, 0.1, 10)  # And this KL is symmetric
-    17.57779...
-    julia&gt; klBin(0.4, 0.5, 10)
-    0.20135...
-    julia&gt; klBin(0.01, 0.99, 10)
-    45.03217...</code></pre><ul><li><p>Special values:</p></li></ul><pre><code class="language-julia">    julia&gt; klBin(0, 1, 10)  # Should be +Inf, but 0 --&gt; eps, 1 --&gt; 1 - eps
-    345.39575...</code></pre></div><a class="source-link" target="_blank" href="https://github.com/Naereen/Kullback-Leibler-divergences-and-kl-UCB-indexes/blob/6a58c67731a75090822d0fe16bfade506259cc82/julia-src/KullbackLeibler.jl#L80">source</a></section><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="KullbackLeibler.klPoisson-Tuple{Any,Any}" href="#KullbackLeibler.klPoisson-Tuple{Any,Any}"><code>KullbackLeibler.klPoisson</code></a> — <span class="docstring-category">Method</span>.</div><div><pre><code class="language-none">function klPoisson(x, y)</code></pre><p>Kullback-Leibler divergence for Poison distributions. https://en.wikipedia.org/wiki/Poisson_distribution#Kullback.E2.80.93Leibler_divergence</p><div>\[\mathrm{KL}(\mathrm{Poisson}(x), \mathrm{Poisson}(y)) = y - x + x \times \log(\frac{x}{y}).\]</div><pre><code class="language-julia">    julia&gt; klPoisson(3, 3)
-    0.0
-    julia&gt; klPoisson(2, 1)
-    0.386294...
-    julia&gt; klPoisson(1, 2)  # And this KL is non-symmetric
-    0.306852...
-    julia&gt; klPoisson(3, 6)
-    0.920558...
-    julia&gt; klPoisson(6, 8)
-    0.273907...</code></pre><ul><li><p>Special values:</p></li></ul><pre><code class="language-julia">    julia&gt; klPoisson(1, 0)  # Should be +Inf, but 0 --&gt; eps, 1 --&gt; 1 - eps
-    33.538776...
-    julia&gt; klPoisson(0, 0)
-    0.0</code></pre></div><a class="source-link" target="_blank" href="https://github.com/Naereen/Kullback-Leibler-divergences-and-kl-UCB-indexes/blob/6a58c67731a75090822d0fe16bfade506259cc82/julia-src/KullbackLeibler.jl#L118">source</a></section><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="KullbackLeibler.klExp-Tuple{Any,Any}" href="#KullbackLeibler.klExp-Tuple{Any,Any}"><code>KullbackLeibler.klExp</code></a> — <span class="docstring-category">Method</span>.</div><div><pre><code class="language-none">function klExp(x, y)</code></pre><p>Kullback-Leibler divergence for exponential distributions. https://en.wikipedia.org/wiki/Exponential_distribution#Kullback.E2.80.93Leibler_divergence</p><p>.. math::</p><pre><code class="language-none">\mathrm{KL}(\mathrm{Exp}(x), \mathrm{Exp}(y)) = \begin{cases}
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Documentation · KullbackLeibler.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="assets/documenter.js"></script><script src="siteinfo.js"></script><script src="../versions.js"></script><link href="assets/documenter.css" rel="stylesheet" type="text/css"/></head><body><nav class="toc"><h1>KullbackLeibler.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" id="search-form" action="search.html"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li class="current"><a class="toctext" href="index.html">Documentation</a><ul class="internal"><li><a class="toctext" href="#Index-1">Index</a></li><li><a class="toctext" href="#Kullback-Leibler-divergences-1">Kullback-Leibler divergences</a></li><li><a class="toctext" href="#KL-UCB-indexes-functions-1">KL-UCB indexes functions</a></li></ul></li></ul></nav><article id="docs"><header><nav><ul><li><a href="index.html">Documentation</a></li></ul><a class="edit-page" href="https://github.com/Naereen/Kullback-Leibler-divergences-and-kl-UCB-indexes/blob/master/julia-generate-docs/src/index.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/><div id="topbar"><span>Documentation</span><a class="fa fa-bars" href="#"></a></div></header><h1><a class="nav-anchor" id="Documentation-1" href="#Documentation-1">Documentation</a></h1><p>This repository contains a small, simple and efficient module, implementing various <a href="https://en.wikipedia.org/wiki/Kullback%E2%80%93Leibler_divergence">Kullback-Leibler divergences</a> for parametric 1D continuous or discrete distributions. For more information, see <a href="https://github.com/Naereen/KullbackLeibler.jl/">the homepage on GitHub</a>.</p><ul><li><a href="index.html#Documentation-1">Documentation</a></li><ul><li><a href="index.html#Index-1">Index</a></li><li><a href="index.html#Kullback-Leibler-divergences-1">Kullback-Leibler divergences</a></li><li><a href="index.html#KL-UCB-indexes-functions-1">KL-UCB indexes functions</a></li></ul></ul><hr/><h2><a class="nav-anchor" id="Index-1" href="#Index-1">Index</a></h2><ul><li><a href="index.html#KullbackLeibler.KL-Tuple{Any,Any}"><code>KullbackLeibler.KL</code></a></li><li><a href="index.html#KullbackLeibler.klBern-Tuple{Any,Any}"><code>KullbackLeibler.klBern</code></a></li><li><a href="index.html#KullbackLeibler.klBin-Tuple{Any,Any,Any}"><code>KullbackLeibler.klBin</code></a></li><li><a href="index.html#KullbackLeibler.klExp-Tuple{Any,Any}"><code>KullbackLeibler.klExp</code></a></li><li><a href="index.html#KullbackLeibler.klGamma-Tuple{Any,Any,Any}"><code>KullbackLeibler.klGamma</code></a></li><li><a href="index.html#KullbackLeibler.klGauss-NTuple{4,Any}"><code>KullbackLeibler.klGauss</code></a></li><li><a href="index.html#KullbackLeibler.klNegBin-Tuple{Any,Any,Any}"><code>KullbackLeibler.klNegBin</code></a></li><li><a href="index.html#KullbackLeibler.klPoisson-Tuple{Any,Any}"><code>KullbackLeibler.klPoisson</code></a></li><li><a href="index.html#KullbackLeibler.klucb-NTuple{7,Any}"><code>KullbackLeibler.klucb</code></a></li><li><a href="index.html#KullbackLeibler.klucbBern-Tuple{Any,Any,Any}"><code>KullbackLeibler.klucbBern</code></a></li><li><a href="index.html#KullbackLeibler.klucbExp-Tuple{Any,Any,Any}"><code>KullbackLeibler.klucbExp</code></a></li><li><a href="index.html#KullbackLeibler.klucbGamma-Tuple{Any,Any,Any}"><code>KullbackLeibler.klucbGamma</code></a></li><li><a href="index.html#KullbackLeibler.klucbGauss-NTuple{4,Any}"><code>KullbackLeibler.klucbGauss</code></a></li><li><a href="index.html#KullbackLeibler.klucbPoisson-Tuple{Any,Any,Any}"><code>KullbackLeibler.klucbPoisson</code></a></li></ul><h2><a class="nav-anchor" id="Kullback-Leibler-divergences-1" href="#Kullback-Leibler-divergences-1">Kullback-Leibler divergences</a></h2><ul><li><p>Generic interface for <a href="https://github.com/JuliaStats/Distributions.jl/"><code>Distributions</code></a> objects:</p></li></ul><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="KullbackLeibler.KL-Tuple{Any,Any}" href="#KullbackLeibler.KL-Tuple{Any,Any}"><code>KullbackLeibler.KL</code></a> — <span class="docstring-category">Method</span>.</div><div><pre><code class="language-none">function KL( D1, D2 )</code></pre><p>Common function to compute the Kullback-Leibler for some continuous and discrete 1D parametric distributions (of module Distributions).</p><p>See <a href="https://juliastats.github.io/Distributions.jl/latest/univariate.html#Continuous-Distributions-1">doc for continuous distributions</a> and <a href="https://juliastats.github.io/Distributions.jl/latest/univariate.html#Discrete-Distributions-1">doc for discrete distributions</a>.</p><p>Currently supported: <code>Bernoulli</code>, <code>Binomial</code>, <code>Poisson</code>, <code>NegativeBinomial</code> (discrete) and <code>Exponential</code>, <code>Gamma</code>, <code>Gaussian</code> (continuous).</p><p>Examples:</p><ul><li><p>Bernoulli:</p></li></ul><pre><code class="language-julia">julia&gt; Bern1 = Distributions.Bernoulli(0.33)
+Distributions.Bernoulli{Float64}(p=0.33)
+julia&gt; Bern2 = Distributions.Bernoulli(0.42)
+Distributions.Bernoulli{Float64}(p=0.42)
+julia&gt; ex_kl_1 = KL( Bern1, Bern2 )  # Calc KL divergence for Bernoulli R.V
+0.017063...
+julia&gt; klBern(0.33, 0.42)  # same!
+0.017063...</code></pre><ul><li><p>Binomial:</p></li></ul><pre><code class="language-julia">julia&gt; Bin1 = Distributions.Binomial(13, 0.33)
+Distributions.Binomial{Float64}(n=13, p=0.33)
+julia&gt; Bin2 = Distributions.Binomial(13, 0.42)   # must have same parameter n
+Distributions.Binomial{Float64}(n=13, p=0.42)
+julia&gt; ex_kl_2 = KL( Bin1, Bin2 )  # Calc KL divergence for Binomial R.V
+0.221828...</code></pre><ul><li><p>Poisson:</p></li></ul><pre><code class="language-julia">julia&gt; Pois1 = Distributions.Poisson(0.33)
+Distributions.Poisson{Float64}(λ=0.33)
+julia&gt; Pois2 = Distributions.Poisson(0.92)
+Distributions.Poisson{Float64}(λ=0.92)
+julia&gt; ex_kl_3 = KL( Pois1, Pois2 )  # Calc KL divergence for Poisson R.V
+0.251657</code></pre><ul><li><p>Exponential:</p></li></ul><pre><code class="language-julia">julia&gt; Exp1 = Distributions.Exponential( 0.33 )
+Distributions.Exponential{Float64}(θ=0.33)
+julia&gt; Exp2 = Distributions.Exponential( 0.42 )
+Distributions.Exponential{Float64}(θ=0.42)
+julia&gt; ex_kl_4 = KL( Exp1, Exp2 )  # Calc KL div for Exponential R.V
+0.0268763</code></pre><ul><li><p>Gamma:</p></li></ul><pre><code class="language-julia">julia&gt; Gam1 = Distributions.Gamma(0.5, 0.33)
+Distributions.Gamma{Float64}(α=0.5, θ=0.33)
+julia&gt; Gam2 = Distributions.Gamma(0.5, 0.42)     # must have same parameter α
+Distributions.Gamma{Float64}(α=0.5, θ=0.42)
+julia&gt; ex_kl_5 = KL( Gam1, Gam2 )  # Calc KL divergence for Gamma R.V
+0.0134381</code></pre><ul><li><p>NegativeBinomial:</p></li></ul><pre><code class="language-julia">julia&gt; NegBin1 = Distributions.NegativeBinomial(40, 0.33)
+Distributions.NegativeBinomial{Float64}(r=40, p=0.33)
+julia&gt; NegBin2 = Distributions.NegativeBinomial(40, 0.99)  # must have same parameter r
+Distributions.NegativeBinomial{Float64}(r=40, p=0.99)
+julia&gt; ex_kl_6 = KL( NegBin1, NegBin2 )       # Calc KL divergence for NegativeBinomial R.V
+17.277824</code></pre><ul><li><p>Gaussian:</p></li></ul><pre><code class="language-julia">julia&gt; Gauss1 = Distributions.Gaussian(0.33, 1)
+Distributions.Normal{Float64}(μ=0.33, σ=1.0)
+julia&gt; Gauss2 = Distributions.Gaussian(0.42, 1)      # can have same σ
+Distributions.Normal{Float64}(μ=0.42, σ=1.0)
+julia&gt; ex_kl_7 = KL( Gauss1, Gauss2 )  # Calc KL divergence for Gaussian R.V
+0.0040499...
+
+julia&gt; Gauss3 = Distributions.Gaussian(0.42, 10)     # but can also have a different σ
+Distributions.Normal{Float64}(μ=0.33, σ=10.0)
+julia&gt; ex_kl_7 = KL( Gauss1, Gauss3 )  # Calc KL divergence for Gaussian R.V
+0.656697...</code></pre></div><a class="source-link" target="_blank" href="https://github.com/Naereen/Kullback-Leibler-divergences-and-kl-UCB-indexes/blob/2b027158f4a685355bf9d5d89884ab95e9c0fe1a/julia-src/KullbackLeibler.jl#L417">source</a></section><ul><li><p>Specific functions:</p></li></ul><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="KullbackLeibler.klBern-Tuple{Any,Any}" href="#KullbackLeibler.klBern-Tuple{Any,Any}"><code>KullbackLeibler.klBern</code></a> — <span class="docstring-category">Method</span>.</div><div><pre><code class="language-none">function klBern(x, y)</code></pre><p>Kullback-Leibler divergence for Bernoulli distributions. https://en.wikipedia.org/wiki/Bernoulli_distribution#Kullback.E2.80.93Leibler_divergence</p><div>\[\mathrm{KL}(\mathcal{B}(x), \mathcal{B}(y)) = x \log(\frac{x}{y}) + (1-x) \log(\frac{1-x}{1-y}).\]</div><pre><code class="language-julia">julia&gt; klBern(0.5, 0.5)
+0.0
+julia&gt; klBern(0.1, 0.9)
+1.757779...
+julia&gt; klBern(0.9, 0.1)  # And this KL is symmetric
+1.757779...
+julia&gt; klBern(0.4, 0.5)
+0.020135...
+julia&gt; klBern(0.01, 0.99)
+4.503217...</code></pre><ul><li><p>Special values:</p></li></ul><pre><code class="language-julia">julia&gt; klBern(0, 1)  # Should be +Inf, but 0 --&gt; eps, 1 --&gt; 1 - eps
+34.539575...</code></pre></div><a class="source-link" target="_blank" href="https://github.com/Naereen/Kullback-Leibler-divergences-and-kl-UCB-indexes/blob/2b027158f4a685355bf9d5d89884ab95e9c0fe1a/julia-src/KullbackLeibler.jl#L59">source</a></section><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="KullbackLeibler.klBin-Tuple{Any,Any,Any}" href="#KullbackLeibler.klBin-Tuple{Any,Any,Any}"><code>KullbackLeibler.klBin</code></a> — <span class="docstring-category">Method</span>.</div><div><pre><code class="language-none">function klBin(x, y, n)</code></pre><p>Kullback-Leibler divergence for Binomial distributions. https://math.stackexchange.com/questions/320399/kullback-leibner-divergence-of-binomial-distributions</p><ul><li><p>It is simply the n times <code>klBern</code> on x and y.</p></li></ul><div>\[\mathrm{KL}(\mathrm{Bin}(x, n), \mathrm{Bin}(y, n)) = n \times \left(x \log(\frac{x}{y}) + (1-x) \log(\frac{1-x}{1-y}) \right).\]</div><ul><li><p><strong>Warning</strong>: The two distributions must have the same parameter n, and x, y are p, q in (0, 1).</p></li></ul><pre><code class="language-julia">julia&gt; klBin(0.5, 0.5, 10)
+0.0
+julia&gt; klBin(0.1, 0.9, 10)
+17.57779...
+julia&gt; klBin(0.9, 0.1, 10)  # And this KL is symmetric
+17.57779...
+julia&gt; klBin(0.4, 0.5, 10)
+0.20135...
+julia&gt; klBin(0.01, 0.99, 10)
+45.03217...</code></pre><ul><li><p>Special values:</p></li></ul><pre><code class="language-julia">julia&gt; klBin(0, 1, 10)  # Should be +Inf, but 0 --&gt; eps, 1 --&gt; 1 - eps
+345.39575...</code></pre></div><a class="source-link" target="_blank" href="https://github.com/Naereen/Kullback-Leibler-divergences-and-kl-UCB-indexes/blob/2b027158f4a685355bf9d5d89884ab95e9c0fe1a/julia-src/KullbackLeibler.jl#L93">source</a></section><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="KullbackLeibler.klPoisson-Tuple{Any,Any}" href="#KullbackLeibler.klPoisson-Tuple{Any,Any}"><code>KullbackLeibler.klPoisson</code></a> — <span class="docstring-category">Method</span>.</div><div><pre><code class="language-none">function klPoisson(x, y)</code></pre><p>Kullback-Leibler divergence for Poison distributions. https://en.wikipedia.org/wiki/Poisson_distribution#Kullback.E2.80.93Leibler_divergence</p><div>\[\mathrm{KL}(\mathrm{Poisson}(x), \mathrm{Poisson}(y)) = y - x + x \times \log(\frac{x}{y}).\]</div><pre><code class="language-julia">julia&gt; klPoisson(3, 3)
+0.0
+julia&gt; klPoisson(2, 1)
+0.386294...
+julia&gt; klPoisson(1, 2)  # And this KL is non-symmetric
+0.306852...
+julia&gt; klPoisson(3, 6)
+0.920558...
+julia&gt; klPoisson(6, 8)
+0.273907...</code></pre><ul><li><p>Special values:</p></li></ul><pre><code class="language-julia">julia&gt; klPoisson(1, 0)  # Should be +Inf, but 0 --&gt; eps, 1 --&gt; 1 - eps
+33.538776...
+julia&gt; klPoisson(0, 0)
+0.0</code></pre></div><a class="source-link" target="_blank" href="https://github.com/Naereen/Kullback-Leibler-divergences-and-kl-UCB-indexes/blob/2b027158f4a685355bf9d5d89884ab95e9c0fe1a/julia-src/KullbackLeibler.jl#L131">source</a></section><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="KullbackLeibler.klExp-Tuple{Any,Any}" href="#KullbackLeibler.klExp-Tuple{Any,Any}"><code>KullbackLeibler.klExp</code></a> — <span class="docstring-category">Method</span>.</div><div><pre><code class="language-none">function klExp(x, y)</code></pre><p>Kullback-Leibler divergence for exponential distributions. https://en.wikipedia.org/wiki/Exponential_distribution#Kullback.E2.80.93Leibler_divergence</p><div>\[\mathrm{KL}(\mathrm{Exp}(x), \mathrm{Exp}(y)) = \begin{cases}
 \frac{x}{y} - 1 - \log(\frac{x}{y}) &amp; \text{if} x &gt; 0, y &gt; 0\\
 +\infty &amp; \text{otherwise}
-\end{cases}</code></pre><pre><code class="language-julia">    julia&gt; klExp(3, 3)
-    0.0
-    julia&gt; klExp(3, 6)
-    0.193147...
-    julia&gt; klExp(1, 2)  # Only the proportion between x and y is used
-    0.193147...
-    julia&gt; klExp(2, 1)  # And this KL is non-symmetric
-    0.306852...
-    julia&gt; klExp(4, 2)  # Only the proportion between x and y is used
-    0.306852...
-    julia&gt; klExp(6, 8)
-    0.037682...</code></pre><ul><li><p>x, y have to be positive:</p></li></ul><pre><code class="language-julia">    julia&gt; klExp(-3, 2)
-    Inf
-    julia&gt; klExp(3, -2)
-    Inf
-    julia&gt; klExp(-3, -2)
-    Inf</code></pre></div><a class="source-link" target="_blank" href="https://github.com/Naereen/Kullback-Leibler-divergences-and-kl-UCB-indexes/blob/6a58c67731a75090822d0fe16bfade506259cc82/julia-src/KullbackLeibler.jl#L154">source</a></section><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="KullbackLeibler.klGamma-Tuple{Any,Any,Any}" href="#KullbackLeibler.klGamma-Tuple{Any,Any,Any}"><code>KullbackLeibler.klGamma</code></a> — <span class="docstring-category">Method</span>.</div><div><pre><code class="language-none">function klGamma(x, y, a=1)</code></pre><p>Kullback-Leibler divergence for gamma distributions. https://en.wikipedia.org/wiki/Gamma_distribution#Kullback.E2.80.93Leibler_divergence</p><ul><li><p>It is simply the a times <code>klExp</code> on x and y.</p></li></ul><p>.. math::</p><pre><code class="language-none">\mathrm{KL}(\Gamma(x, a), \Gamma(y, a)) = \begin{cases}
+\end{cases}\]</div><pre><code class="language-julia">julia&gt; klExp(3, 3)
+0.0
+julia&gt; klExp(3, 6)
+0.193147...
+julia&gt; klExp(1, 2)  # Only the proportion between x and y is used
+0.193147...
+julia&gt; klExp(2, 1)  # And this KL is non-symmetric
+0.306852...
+julia&gt; klExp(4, 2)  # Only the proportion between x and y is used
+0.306852...
+julia&gt; klExp(6, 8)
+0.037682...</code></pre><ul><li><p>x, y have to be positive:</p></li></ul><pre><code class="language-julia">julia&gt; klExp(-3, 2)
+Inf
+julia&gt; klExp(3, -2)
+Inf
+julia&gt; klExp(-3, -2)
+Inf</code></pre></div><a class="source-link" target="_blank" href="https://github.com/Naereen/Kullback-Leibler-divergences-and-kl-UCB-indexes/blob/2b027158f4a685355bf9d5d89884ab95e9c0fe1a/julia-src/KullbackLeibler.jl#L167">source</a></section><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="KullbackLeibler.klGamma-Tuple{Any,Any,Any}" href="#KullbackLeibler.klGamma-Tuple{Any,Any,Any}"><code>KullbackLeibler.klGamma</code></a> — <span class="docstring-category">Method</span>.</div><div><pre><code class="language-none">function klGamma(x, y, a=1)</code></pre><p>Kullback-Leibler divergence for gamma distributions. https://en.wikipedia.org/wiki/Gamma_distribution#Kullback.E2.80.93Leibler_divergence</p><ul><li><p>It is simply the a times <code>klExp</code> on x and y.</p></li></ul><p>.. math::</p><pre><code class="language-none">\mathrm{KL}(\Gamma(x, a), \Gamma(y, a)) = \begin{cases}
 a \times \left( \frac{x}{y} - 1 - \log(\frac{x}{y}) \right) &amp; \text{if} x &gt; 0, y &gt; 0\\
 +\infty &amp; \text{otherwise}
-\end{cases}</code></pre><ul><li><p><strong>Warning</strong>: The two distributions must have the same parameter a.</p></li></ul><pre><code class="language-julia">    julia&gt; klGamma(3, 3)
-    0.0
-    julia&gt; klGamma(3, 6)
-    0.193147...
-    julia&gt; klGamma(1, 2)  # Only the proportion between x and y is used
-    0.193147...
-    julia&gt; klGamma(2, 1)  # And this KL is non-symmetric
-    0.306852...
-    julia&gt; klGamma(4, 2)  # Only the proportion between x and y is used
-    0.306852...
-    julia&gt; klGamma(6, 8)
-    0.037682...</code></pre><ul><li><p>x, y have to be positive:</p></li></ul><pre><code class="language-julia">    julia&gt; klGamma(-3, 2)
-    Inf
-    julia&gt; klGamma(3, -2)
-    Inf
-    julia&gt; klGamma(-3, -2)
-    Inf</code></pre></div><a class="source-link" target="_blank" href="https://github.com/Naereen/Kullback-Leibler-divergences-and-kl-UCB-indexes/blob/6a58c67731a75090822d0fe16bfade506259cc82/julia-src/KullbackLeibler.jl#L203">source</a></section><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="KullbackLeibler.klNegBin-Tuple{Any,Any,Any}" href="#KullbackLeibler.klNegBin-Tuple{Any,Any,Any}"><code>KullbackLeibler.klNegBin</code></a> — <span class="docstring-category">Method</span>.</div><div><pre><code class="language-none">function klNegBin(x, y, r=1)</code></pre><p>Kullback-Leibler divergence for negative binomial distributions. https://en.wikipedia.org/wiki/Negative_binomial_distribution</p><div>\[\mathrm{KL}(\mathrm{NegBin}(x, r), \mathrm{NegBin}(y, r)) = r \times \log((r + x) / (r + y)) - x \times \log(y \times (r + x) / (x \times (r + y))).\]</div><ul><li><p><strong>Warning</strong>: The two distributions must have the same parameter r.</p></li></ul><pre><code class="language-julia">    julia&gt; klNegBin(0.5, 0.5)
-    0.0
-    julia&gt; klNegBin(0.1, 0.9)
-    -0.711611...
-    julia&gt; klNegBin(0.9, 0.1)  # And this KL is non-symmetric
-    2.0321564...
-    julia&gt; klNegBin(0.4, 0.5)
-    -0.130653...
-    julia&gt; klNegBin(0.01, 0.99)
-    -0.717353...</code></pre><ul><li><p>Special values:</p></li></ul><pre><code class="language-julia">    julia&gt; klBern(0, 1)  # Should be +Inf, but 0 --&gt; eps, 1 --&gt; 1 - eps
-    34.539575...</code></pre><ul><li><p>With other values for <code>r</code>:</p></li></ul><pre><code class="language-julia">    julia&gt; klNegBin(0.5, 0.5, r=2)
-    0.0
-    julia&gt; klNegBin(0.1, 0.9, r=2)
-    -0.832991...
-    julia&gt; klNegBin(0.1, 0.9, r=4)
-    -0.914890...
-    julia&gt; klNegBin(0.9, 0.1, r=2)  # And this KL is non-symmetric
-    2.3325528...
-    julia&gt; klNegBin(0.4, 0.5, r=2)
-    -0.154572...
-    julia&gt; klNegBin(0.01, 0.99, r=2)
-    -0.836257...</code></pre></div><a class="source-link" target="_blank" href="https://github.com/Naereen/Kullback-Leibler-divergences-and-kl-UCB-indexes/blob/6a58c67731a75090822d0fe16bfade506259cc82/julia-src/KullbackLeibler.jl#L256">source</a></section><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="KullbackLeibler.klGauss-NTuple{4,Any}" href="#KullbackLeibler.klGauss-NTuple{4,Any}"><code>KullbackLeibler.klGauss</code></a> — <span class="docstring-category">Method</span>.</div><div><pre><code class="language-none">function klGauss(x, y, sig2x=0.25, sig2y=0.25)</code></pre><p>Kullback-Leibler divergence for Gaussian distributions of means <span>$x$</span> and <span>$y$</span> and variances <span>$sig2x$</span> and <span>$sig2y$</span>, <span>$\nu_1 = \mathcal{N}(x, \sigma_x^2)$</span> and <span>$\nu_2 = \mathcal{N}(y, \sigma_x^2)$</span>:</p><div>\[\mathrm{KL}(\nu_1, \nu_2) = \frac{(x - y)^2}{2 \sigma_y^2} + \frac{1}{2}\left( \frac{\sigma_x^2}{\sigma_y^2} - 1 \log\left(\frac{\sigma_x^2}{\sigma_y^2}\right) \right).\]</div><p>See https://en.wikipedia.org/wiki/Normal_distribution#Other_properties</p><ul><li><p>By default, sig2y is assumed to be sig2x (same variance).</p></li></ul><pre><code class="language-julia">    julia&gt; klGauss(3, 3)
-    0.0
-    julia&gt; klGauss(3, 6)
-    18.0
-    julia&gt; klGauss(1, 2)
-    2.0
-    julia&gt; klGauss(2, 1)  # And this KL is symmetric
-    2.0
-    julia&gt; klGauss(4, 2)
-    8.0
-    julia&gt; klGauss(6, 8)
-    8.0</code></pre><ul><li><p>x, y can be negative:</p></li></ul><pre><code class="language-julia">    julia&gt; klGauss(-3, 2)
-    50.0
-    julia&gt; klGauss(3, -2)
-    50.0
-    julia&gt; klGauss(-3, -2)
-    2.0
-    julia&gt; klGauss(3, 2)
-    2.0</code></pre><ul><li><p>With other values for <code>sig2x</code>:</p></li></ul><pre><code class="language-julia">    julia&gt; klGauss(3, 3, sig2x=10)
-    0.0
-    julia&gt; klGauss(3, 6, sig2x=10)
-    0.45
-    julia&gt; klGauss(1, 2, sig2x=10)
-    0.05
-    julia&gt; klGauss(2, 1, sig2x=10)  # And this KL is symmetric
-    0.05
-    julia&gt; klGauss(4, 2, sig2x=10)
-    0.2
-    julia&gt; klGauss(6, 8, sig2x=10)
-    0.2</code></pre><ul><li><p>With different values for <code>sig2x</code> and <code>sig2y</code>:</p></li></ul><pre><code class="language-julia">    julia&gt; klGauss(0, 0, sig2x=0.25, sig2y=0.5)
-    -0.0284...
-    julia&gt; klGauss(0, 0, sig2x=0.25, sig2y=1.0)
-    0.2243...
-    julia&gt; klGauss(0, 0, sig2x=0.5, sig2y=0.25)  # not symmetric here!
-    1.1534...
+\end{cases}</code></pre><ul><li><p><strong>Warning</strong>: The two distributions must have the same parameter a.</p></li></ul><pre><code class="language-julia">julia&gt; klGamma(3, 3)
+0.0
+julia&gt; klGamma(3, 6)
+0.193147...
+julia&gt; klGamma(1, 2)  # Only the proportion between x and y is used
+0.193147...
+julia&gt; klGamma(2, 1)  # And this KL is non-symmetric
+0.306852...
+julia&gt; klGamma(4, 2)  # Only the proportion between x and y is used
+0.306852...
+julia&gt; klGamma(6, 8)
+0.037682...</code></pre><ul><li><p>x, y have to be positive:</p></li></ul><pre><code class="language-julia">julia&gt; klGamma(-3, 2)
+Inf
+julia&gt; klGamma(3, -2)
+Inf
+julia&gt; klGamma(-3, -2)
+Inf</code></pre></div><a class="source-link" target="_blank" href="https://github.com/Naereen/Kullback-Leibler-divergences-and-kl-UCB-indexes/blob/2b027158f4a685355bf9d5d89884ab95e9c0fe1a/julia-src/KullbackLeibler.jl#L214">source</a></section><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="KullbackLeibler.klNegBin-Tuple{Any,Any,Any}" href="#KullbackLeibler.klNegBin-Tuple{Any,Any,Any}"><code>KullbackLeibler.klNegBin</code></a> — <span class="docstring-category">Method</span>.</div><div><pre><code class="language-none">function klNegBin(x, y, r=1)</code></pre><p>Kullback-Leibler divergence for negative binomial distributions. https://en.wikipedia.org/wiki/Negative_binomial_distribution</p><div>\[\mathrm{KL}(\mathrm{NegBin}(x, r), \mathrm{NegBin}(y, r)) = r \times \log((r + x) / (r + y)) - x \times \log(y \times (r + x) / (x \times (r + y))).\]</div><ul><li><p><strong>Warning</strong>: The two distributions must have the same parameter r.</p></li></ul><pre><code class="language-julia">julia&gt; klNegBin(0.5, 0.5)
+0.0
+julia&gt; klNegBin(0.1, 0.9)
+-0.711611...
+julia&gt; klNegBin(0.9, 0.1)  # And this KL is non-symmetric
+2.0321564...
+julia&gt; klNegBin(0.4, 0.5)
+-0.130653...
+julia&gt; klNegBin(0.01, 0.99)
+-0.717353...</code></pre><ul><li><p>Special values:</p></li></ul><pre><code class="language-julia">julia&gt; klBern(0, 1)  # Should be +Inf, but 0 --&gt; eps, 1 --&gt; 1 - eps
+    34.539575...</code></pre><ul><li><p>With other values for <code>r</code>:</p></li></ul><pre><code class="language-julia">julia&gt; klNegBin(0.5, 0.5, r=2)
+0.0
+julia&gt; klNegBin(0.1, 0.9, r=2)
+-0.832991...
+julia&gt; klNegBin(0.1, 0.9, r=4)
+-0.914890...
+julia&gt; klNegBin(0.9, 0.1, r=2)  # And this KL is non-symmetric
+2.3325528...
+julia&gt; klNegBin(0.4, 0.5, r=2)
+-0.154572...
+julia&gt; klNegBin(0.01, 0.99, r=2)
+-0.836257...</code></pre></div><a class="source-link" target="_blank" href="https://github.com/Naereen/Kullback-Leibler-divergences-and-kl-UCB-indexes/blob/2b027158f4a685355bf9d5d89884ab95e9c0fe1a/julia-src/KullbackLeibler.jl#L267">source</a></section><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="KullbackLeibler.klGauss-NTuple{4,Any}" href="#KullbackLeibler.klGauss-NTuple{4,Any}"><code>KullbackLeibler.klGauss</code></a> — <span class="docstring-category">Method</span>.</div><div><pre><code class="language-none">function klGauss(x, y, sig2x=0.25, sig2y=0.25)</code></pre><p>Kullback-Leibler divergence for Gaussian distributions of means <span>$x$</span> and <span>$y$</span> and variances <span>$sig2x$</span> and <span>$sig2y$</span>, <span>$\nu_1 = \mathcal{N}(x, \sigma_x^2)$</span> and <span>$\nu_2 = \mathcal{N}(y, \sigma_x^2)$</span>:</p><div>\[\mathrm{KL}(\nu_1, \nu_2) = \frac{(x - y)^2}{2 \sigma_y^2} + \frac{1}{2}\left( \frac{\sigma_x^2}{\sigma_y^2} - 1 \log\left(\frac{\sigma_x^2}{\sigma_y^2}\right) \right).\]</div><p>See https://en.wikipedia.org/wiki/Normal_distribution#Other_properties</p><ul><li><p>By default, sig2y is assumed to be sig2x (same variance).</p></li></ul><pre><code class="language-julia">julia&gt; klGauss(3, 3)
+0.0
+julia&gt; klGauss(3, 6)
+18.0
+julia&gt; klGauss(1, 2)
+2.0
+julia&gt; klGauss(2, 1)  # And this KL is symmetric
+2.0
+julia&gt; klGauss(4, 2)
+8.0
+julia&gt; klGauss(6, 8)
+8.0</code></pre><ul><li><p>x, y can be negative:</p></li></ul><pre><code class="language-julia">julia&gt; klGauss(-3, 2)
+50.0
+julia&gt; klGauss(3, -2)
+50.0
+julia&gt; klGauss(-3, -2)
+2.0
+julia&gt; klGauss(3, 2)
+2.0</code></pre><ul><li><p>With other values for <code>sig2x</code>:</p></li></ul><pre><code class="language-julia">julia&gt; klGauss(3, 3, sig2x=10)
+0.0
+julia&gt; klGauss(3, 6, sig2x=10)
+0.45
+julia&gt; klGauss(1, 2, sig2x=10)
+0.05
+julia&gt; klGauss(2, 1, sig2x=10)  # And this KL is symmetric
+0.05
+julia&gt; klGauss(4, 2, sig2x=10)
+0.2
+julia&gt; klGauss(6, 8, sig2x=10)
+0.2</code></pre><ul><li><p>With different values for <code>sig2x</code> and <code>sig2y</code>:</p></li></ul><pre><code class="language-julia">julia&gt; klGauss(0, 0, sig2x=0.25, sig2y=0.5)
+-0.0284...
+julia&gt; klGauss(0, 0, sig2x=0.25, sig2y=1.0)
+0.2243...
+julia&gt; klGauss(0, 0, sig2x=0.5, sig2y=0.25)  # not symmetric here!
+1.1534...
 
-    julia&gt; klGauss(0, 1, sig2x=0.25, sig2y=0.5)
-    0.9715...
-    julia&gt; klGauss(0, 1, sig2x=0.25, sig2y=1.0)
-    0.7243...
-    julia&gt; klGauss(0, 1, sig2x=0.5, sig2y=0.25)  # not symmetric here!
-    3.1534...
+julia&gt; klGauss(0, 1, sig2x=0.25, sig2y=0.5)
+0.9715...
+julia&gt; klGauss(0, 1, sig2x=0.25, sig2y=1.0)
+0.7243...
+julia&gt; klGauss(0, 1, sig2x=0.5, sig2y=0.25)  # not symmetric here!
+3.1534...
 
-    julia&gt; klGauss(1, 0, sig2x=0.25, sig2y=0.5)
-    0.9715...
-    julia&gt; klGauss(1, 0, sig2x=0.25, sig2y=1.0)
-    0.7243...
-    julia&gt; klGauss(1, 0, sig2x=0.5, sig2y=0.25)  # not symmetric here!
-    3.1534...</code></pre><ul><li><p><strong>Warning:</strong> Using :class:<code>Policies.klUCB</code> (and variants) with <code>klGauss</code> is equivalent to use :class:<code>Policies.UCB</code>, so prefer the simpler version.</p></li></ul></div><a class="source-link" target="_blank" href="https://github.com/Naereen/Kullback-Leibler-divergences-and-kl-UCB-indexes/blob/6a58c67731a75090822d0fe16bfade506259cc82/julia-src/KullbackLeibler.jl#L309">source</a></section><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="KullbackLeibler.klucb-NTuple{7,Any}" href="#KullbackLeibler.klucb-NTuple{7,Any}"><code>KullbackLeibler.klucb</code></a> — <span class="docstring-category">Method</span>.</div><div><pre><code class="language-none">function klucb(x, d, kl, upperbound, lowerbound=-Inf, precision=1e-6, max_iterations=50)</code></pre><p>The generic KL-UCB index computation.</p><ul><li><p>x: value of the cum reward,</p></li><li><p>d: upper bound on the divergence,</p></li><li><p>kl: the KL divergence to be used (<code>klBern</code>, <code>klGauss</code>, etc),</p></li><li><p>upperbound, lowerbound=-Inf: the known bound of the values x,</p></li><li><p>precision=1e-6: the threshold from where to stop the research,</p></li><li><p>max_iterations: max number of iterations of the loop (safer to bound it to reduce time complexity).</p></li><li><p><strong>Note</strong>: It uses a <strong>bisection search</strong>, and one call to <span>$kl$</span> for each step of the bisection search.</p></li></ul><p>For example, for <code>klucbBern</code>, the two steps are to first compute an upperbound (as precise as possible) and the compute the kl-UCB index:</p><pre><code class="language-julia">    julia&gt; x, d = 0.9, 0.2   # mean x, exploration term d
-    julia&gt; upperbound = min(1.0, klucbGauss(x, d, sig2x=0.25))  # variance 1/4 for [0,1] bounded distributions
-    julia&gt; upperbound
-    1.0
-    julia&gt; klucb(x, d, klBern, upperbound, lowerbound=0, precision=1e-3, max_iterations=10)
-    0.9941...
-    julia&gt; klucb(x, d, klBern, upperbound, lowerbound=0, precision=1e-6, max_iterations=10)
-    0.994482...
-    julia&gt; klucb(x, d, klBern, upperbound, lowerbound=0, precision=1e-3, max_iterations=50)
-    0.9941...
-    julia&gt; klucb(x, d, klBern, upperbound, lowerbound=0, precision=1e-6, max_iterations=100)  # more and more precise!
-    0.994489...</code></pre><ul><li><p><strong>Note</strong>: See below for more examples for different KL divergence functions.</p></li></ul></div><a class="source-link" target="_blank" href="https://github.com/Naereen/Kullback-Leibler-divergences-and-kl-UCB-indexes/blob/6a58c67731a75090822d0fe16bfade506259cc82/julia-src/KullbackLeibler.jl#L403">source</a></section><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="KullbackLeibler.klucbBern-Tuple{Any,Any,Any}" href="#KullbackLeibler.klucbBern-Tuple{Any,Any,Any}"><code>KullbackLeibler.klucbBern</code></a> — <span class="docstring-category">Method</span>.</div><div><pre><code class="language-none">function klucbBern(x, d, precision=1e-6)</code></pre><p>KL-UCB index computation for Bernoulli distributions, using <code>klucb</code>.</p><ul><li><p>Influence of x:</p></li></ul><pre><code class="language-julia">    julia&gt; klucbBern(0.1, 0.2)
-    0.378391...
-    julia&gt; klucbBern(0.5, 0.2)
-    0.787088...
-    julia&gt; klucbBern(0.9, 0.2)
-    0.994489...</code></pre><ul><li><p>Influence of d:</p></li></ul><pre><code class="language-julia">    julia&gt; klucbBern(0.1, 0.4)
-    0.519475...
-    julia&gt; klucbBern(0.1, 0.9)
-    0.734714...
+julia&gt; klGauss(1, 0, sig2x=0.25, sig2y=0.5)
+0.9715...
+julia&gt; klGauss(1, 0, sig2x=0.25, sig2y=1.0)
+0.7243...
+julia&gt; klGauss(1, 0, sig2x=0.5, sig2y=0.25)  # not symmetric here!
+3.1534...</code></pre><ul><li><p><strong>Warning:</strong> Using <a href="https://smpybandits.github.io/docs/Policies.klUCB.html"><code>Policies.klUCB</code></a> (and variants) with <code>klGauss</code> is equivalent to use <a href="https://smpybandits.github.io/docs/Policies.UCB.html"><code>Policies.UCB</code></a>, so prefer the simpler version. (<strong>this is only for the Python version</strong>)</p></li></ul></div><a class="source-link" target="_blank" href="https://github.com/Naereen/Kullback-Leibler-divergences-and-kl-UCB-indexes/blob/2b027158f4a685355bf9d5d89884ab95e9c0fe1a/julia-src/KullbackLeibler.jl#L320">source</a></section><h2><a class="nav-anchor" id="KL-UCB-indexes-functions-1" href="#KL-UCB-indexes-functions-1">KL-UCB indexes functions</a></h2><ul><li><p>Generic function:</p></li></ul><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="KullbackLeibler.klucb-NTuple{7,Any}" href="#KullbackLeibler.klucb-NTuple{7,Any}"><code>KullbackLeibler.klucb</code></a> — <span class="docstring-category">Method</span>.</div><div><pre><code class="language-none">function klucb(x, d, kl, upperbound, lowerbound=-Inf, precision=1e-6, max_iterations=50)</code></pre><p>The generic kl-UCB index computation.</p><ul><li><p>x: value of the cum reward,</p></li><li><p>d: upper bound on the divergence,</p></li><li><p>kl: the KL divergence to be used (<code>klBern</code>, <code>klGauss</code>, etc),</p></li><li><p>upperbound, lowerbound=-Inf: the known bound of the values x,</p></li><li><p>precision=1e-6: the threshold from where to stop the research,</p></li><li><p>max_iterations: max number of iterations of the loop (safer to bound it to reduce time complexity).</p></li><li><p><strong>Note</strong>: It uses a <strong>bisection search</strong>, and one call to <span>$kl$</span> for each step of the bisection search.</p></li></ul><p>For example, for <code>klucbBern</code>, the two steps are to first compute an upperbound (as precise as possible) and the compute the kl-UCB index:</p><pre><code class="language-julia">julia&gt; x, d = 0.9, 0.2   # mean x, exploration term d
+julia&gt; upperbound = min(1.0, klucbGauss(x, d, sig2x=0.25))  # variance 1/4 for [0,1] bounded distributions
+julia&gt; upperbound
+1.0
+julia&gt; klucb(x, d, klBern, upperbound, lowerbound=0, precision=1e-3, max_iterations=10)
+0.9941...
+julia&gt; klucb(x, d, klBern, upperbound, lowerbound=0, precision=1e-6, max_iterations=10)
+0.994482...
+julia&gt; klucb(x, d, klBern, upperbound, lowerbound=0, precision=1e-3, max_iterations=50)
+0.9941...
+julia&gt; klucb(x, d, klBern, upperbound, lowerbound=0, precision=1e-6, max_iterations=100)  # more and more precise!
+0.994489...</code></pre><ul><li><p><strong>Note</strong>: See below for more examples for different KL divergence functions.</p></li></ul></div><a class="source-link" target="_blank" href="https://github.com/Naereen/Kullback-Leibler-divergences-and-kl-UCB-indexes/blob/2b027158f4a685355bf9d5d89884ab95e9c0fe1a/julia-src/KullbackLeibler.jl#L535">source</a></section><ul><li><p>Specific ones:</p></li></ul><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="KullbackLeibler.klucbBern-Tuple{Any,Any,Any}" href="#KullbackLeibler.klucbBern-Tuple{Any,Any,Any}"><code>KullbackLeibler.klucbBern</code></a> — <span class="docstring-category">Method</span>.</div><div><pre><code class="language-none">function klucbBern(x, d, precision=1e-6)</code></pre><p>kl-UCB index computation for Bernoulli distributions, using <code>klucb</code>.</p><ul><li><p>Influence of x:</p></li></ul><pre><code class="language-julia">julia&gt; klucbBern(0.1, 0.2)
+0.378391...
+julia&gt; klucbBern(0.5, 0.2)
+0.787088...
+julia&gt; klucbBern(0.9, 0.2)
+0.994489...</code></pre><ul><li><p>Influence of d:</p></li></ul><pre><code class="language-julia">julia&gt; klucbBern(0.1, 0.4)
+0.519475...
+julia&gt; klucbBern(0.1, 0.9)
+0.734714...
 
-    julia&gt; klucbBern(0.5, 0.4)
-    0.871035...
-    julia&gt; klucbBern(0.5, 0.9)
-    0.956809...
+julia&gt; klucbBern(0.5, 0.4)
+0.871035...
+julia&gt; klucbBern(0.5, 0.9)
+0.956809...
 
-    julia&gt; klucbBern(0.9, 0.4)
-    0.999285...
-    julia&gt; klucbBern(0.9, 0.9)
-    0.999995...</code></pre></div><a class="source-link" target="_blank" href="https://github.com/Naereen/Kullback-Leibler-divergences-and-kl-UCB-indexes/blob/6a58c67731a75090822d0fe16bfade506259cc82/julia-src/KullbackLeibler.jl#L453">source</a></section><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="KullbackLeibler.klucbGauss-NTuple{4,Any}" href="#KullbackLeibler.klucbGauss-NTuple{4,Any}"><code>KullbackLeibler.klucbGauss</code></a> — <span class="docstring-category">Method</span>.</div><div><pre><code class="language-none">function klucbGauss(x, d, sig2x=0.25, precision=0.0)</code></pre><p>KL-UCB index computation for Gaussian distributions.</p><ul><li><p><strong>Note</strong>: it does not require any search.</p></li><li><p><strong>Warning</strong>: it works only if the good variance constant is given.</p></li><li><p>Influence of x:</p></li></ul><pre><code class="language-julia">    julia&gt; klucbGauss(0.1, 0.2)
-    0.416227...
-    julia&gt; klucbGauss(0.5, 0.2)
-    0.816227...
-    julia&gt; klucbGauss(0.9, 0.2)
-    1.216227...
+julia&gt; klucbBern(0.9, 0.4)
+0.999285...
+julia&gt; klucbBern(0.9, 0.9)
+0.999995...</code></pre></div><a class="source-link" target="_blank" href="https://github.com/Naereen/Kullback-Leibler-divergences-and-kl-UCB-indexes/blob/2b027158f4a685355bf9d5d89884ab95e9c0fe1a/julia-src/KullbackLeibler.jl#L585">source</a></section><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="KullbackLeibler.klucbGauss-NTuple{4,Any}" href="#KullbackLeibler.klucbGauss-NTuple{4,Any}"><code>KullbackLeibler.klucbGauss</code></a> — <span class="docstring-category">Method</span>.</div><div><pre><code class="language-none">function klucbGauss(x, d, sig2x=0.25, precision=0.0)</code></pre><p>kl-UCB index computation for Gaussian distributions.</p><ul><li><p><strong>Note</strong>: it does not require any search.</p></li><li><p><strong>Warning</strong>: it works only if the good variance constant is given.</p></li><li><p>Influence of x:</p></li></ul><pre><code class="language-julia">julia&gt; klucbGauss(0.1, 0.2)
+0.416227...
+julia&gt; klucbGauss(0.5, 0.2)
+0.816227...
+julia&gt; klucbGauss(0.9, 0.2)
+1.216227...
 
 - Influence of d:
-</code></pre><p>julia     julia&gt; klucbGauss(0.1, 0.4)     0.547213...     julia&gt; klucbGauss(0.1, 0.9)     0.770820...</p><pre><code class="language-none">julia&gt; klucbGauss(0.5, 0.4)
-0.947213...
-julia&gt; klucbGauss(0.5, 0.9)
-1.170820...
+</code></pre><p>julia julia&gt; klucbGauss(0.1, 0.4) 0.547213... julia&gt; klucbGauss(0.1, 0.9) 0.770820...</p><p>julia&gt; klucbGauss(0.5, 0.4) 0.947213... julia&gt; klucbGauss(0.5, 0.9) 1.170820...</p><p>julia&gt; klucbGauss(0.9, 0.4) 1.347213... julia&gt; klucbGauss(0.9, 0.9) 1.570820... ```</p><ul><li><p><strong>Warning</strong>: Using <a href="https://smpybandits.github.io/docs/Policies.klUCB.html"><code>Policies.klUCB</code></a> (and variants) with <code>klucbGauss</code> is equivalent to use <a href="https://smpybandits.github.io/docs/Policies.UCB.html"><code>Policies.UCB</code></a>, so prefer the simpler version (<strong>this is only for the Python version</strong>).</p></li></ul></div><a class="source-link" target="_blank" href="https://github.com/Naereen/Kullback-Leibler-divergences-and-kl-UCB-indexes/blob/2b027158f4a685355bf9d5d89884ab95e9c0fe1a/julia-src/KullbackLeibler.jl#L627">source</a></section><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="KullbackLeibler.klucbPoisson-Tuple{Any,Any,Any}" href="#KullbackLeibler.klucbPoisson-Tuple{Any,Any,Any}"><code>KullbackLeibler.klucbPoisson</code></a> — <span class="docstring-category">Method</span>.</div><div><pre><code class="language-none">function klucbPoisson(x, d, precision=1e-6)</code></pre><p>kl-UCB index computation for Poisson distributions, using <code>klucb</code>.</p><ul><li><p>Influence of x:</p></li></ul><pre><code class="language-julia">julia&gt; klucbPoisson(0.1, 0.2)
+0.450523...
+julia&gt; klucbPoisson(0.5, 0.2)
+1.089376...
+julia&gt; klucbPoisson(0.9, 0.2)
+1.640112...</code></pre><ul><li><p>Influence of d:</p></li></ul><pre><code class="language-julia">julia&gt; klucbPoisson(0.1, 0.4)
+0.693684...
+julia&gt; klucbPoisson(0.1, 0.9)
+1.252796...
 
-julia&gt; klucbGauss(0.9, 0.4)
-1.347213...
-julia&gt; klucbGauss(0.9, 0.9)
-1.570820...</code></pre><p>```</p><ul><li><p><strong>Warning</strong>: Using :class:<code>Policies.klUCB</code> (and variants) with <code>klucbGauss</code> is equivalent to use :class:<code>Policies.UCB</code>, so prefer the simpler version.</p></li></ul></div><a class="source-link" target="_blank" href="https://github.com/Naereen/Kullback-Leibler-divergences-and-kl-UCB-indexes/blob/6a58c67731a75090822d0fe16bfade506259cc82/julia-src/KullbackLeibler.jl#L495">source</a></section><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="KullbackLeibler.klucbPoisson-Tuple{Any,Any,Any}" href="#KullbackLeibler.klucbPoisson-Tuple{Any,Any,Any}"><code>KullbackLeibler.klucbPoisson</code></a> — <span class="docstring-category">Method</span>.</div><div><pre><code class="language-none">function klucbPoisson(x, d, precision=1e-6)</code></pre><p>KL-UCB index computation for Poisson distributions, using <code>klucb</code>.</p><ul><li><p>Influence of x:</p></li></ul><pre><code class="language-julia">    julia&gt; klucbPoisson(0.1, 0.2)
-    0.450523...
-    julia&gt; klucbPoisson(0.5, 0.2)
-    1.089376...
-    julia&gt; klucbPoisson(0.9, 0.2)
-    1.640112...</code></pre><ul><li><p>Influence of d:</p></li></ul><pre><code class="language-julia">    julia&gt; klucbPoisson(0.1, 0.4)
-    0.693684...
-    julia&gt; klucbPoisson(0.1, 0.9)
-    1.252796...
+julia&gt; klucbPoisson(0.5, 0.4)
+1.422933...
+julia&gt; klucbPoisson(0.5, 0.9)
+2.122985...
 
-    julia&gt; klucbPoisson(0.5, 0.4)
-    1.422933...
-    julia&gt; klucbPoisson(0.5, 0.9)
-    2.122985...
+julia&gt; klucbPoisson(0.9, 0.4)
+2.033691...
+julia&gt; klucbPoisson(0.9, 0.9)
+2.831573...</code></pre></div><a class="source-link" target="_blank" href="https://github.com/Naereen/Kullback-Leibler-divergences-and-kl-UCB-indexes/blob/2b027158f4a685355bf9d5d89884ab95e9c0fe1a/julia-src/KullbackLeibler.jl#L672">source</a></section><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="KullbackLeibler.klucbExp-Tuple{Any,Any,Any}" href="#KullbackLeibler.klucbExp-Tuple{Any,Any,Any}"><code>KullbackLeibler.klucbExp</code></a> — <span class="docstring-category">Method</span>.</div><div><pre><code class="language-none">function klucbExp(x, d, precision=1e-6)</code></pre><p>kl-UCB index computation for exponential distributions, using <code>klucb</code>.</p><ul><li><p>Influence of x:</p></li></ul><pre><code class="language-julia">julia&gt; klucbExp(0.1, 0.2)
+0.202741...
+julia&gt; klucbExp(0.5, 0.2)
+1.013706...
+julia&gt; klucbExp(0.9, 0.2)
+1.824671...</code></pre><ul><li><p>Influence of d:</p></li></ul><pre><code class="language-julia">julia&gt; klucbExp(0.1, 0.4)
+0.285792...
+julia&gt; klucbExp(0.1, 0.9)
+0.559088...
 
-    julia&gt; klucbPoisson(0.9, 0.4)
-    2.033691...
-    julia&gt; klucbPoisson(0.9, 0.9)
-    2.831573...</code></pre></div><a class="source-link" target="_blank" href="https://github.com/Naereen/Kullback-Leibler-divergences-and-kl-UCB-indexes/blob/6a58c67731a75090822d0fe16bfade506259cc82/julia-src/KullbackLeibler.jl#L540">source</a></section><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="KullbackLeibler.klucbExp-Tuple{Any,Any,Any}" href="#KullbackLeibler.klucbExp-Tuple{Any,Any,Any}"><code>KullbackLeibler.klucbExp</code></a> — <span class="docstring-category">Method</span>.</div><div><pre><code class="language-none">function klucbExp(x, d, precision=1e-6)</code></pre><p>KL-UCB index computation for exponential distributions, using <code>klucb</code>.</p><ul><li><p>Influence of x:</p></li></ul><pre><code class="language-julia">    julia&gt; klucbExp(0.1, 0.2)
-    0.202741...
-    julia&gt; klucbExp(0.5, 0.2)
-    1.013706...
-    julia&gt; klucbExp(0.9, 0.2)
-    1.824671...</code></pre><ul><li><p>Influence of d:</p></li></ul><pre><code class="language-julia">    julia&gt; klucbExp(0.1, 0.4)
-    0.285792...
-    julia&gt; klucbExp(0.1, 0.9)
-    0.559088...
+julia&gt; klucbExp(0.5, 0.4)
+1.428962...
+julia&gt; klucbExp(0.5, 0.9)
+2.795442...
 
-    julia&gt; klucbExp(0.5, 0.4)
-    1.428962...
-    julia&gt; klucbExp(0.5, 0.9)
-    2.795442...
+julia&gt; klucbExp(0.9, 0.4)
+2.572132...
+julia&gt; klucbExp(0.9, 0.9)
+5.031795...</code></pre></div><a class="source-link" target="_blank" href="https://github.com/Naereen/Kullback-Leibler-divergences-and-kl-UCB-indexes/blob/2b027158f4a685355bf9d5d89884ab95e9c0fe1a/julia-src/KullbackLeibler.jl#L713">source</a></section><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="KullbackLeibler.klucbGamma-Tuple{Any,Any,Any}" href="#KullbackLeibler.klucbGamma-Tuple{Any,Any,Any}"><code>KullbackLeibler.klucbGamma</code></a> — <span class="docstring-category">Method</span>.</div><div><pre><code class="language-none">function klucbGamma(x, d, precision=1e-6)</code></pre><p>kl-UCB index computation for Gamma distributions, using <code>klucb</code>.</p><ul><li><p>Influence of x:</p></li></ul><pre><code class="language-julia">julia&gt; klucbGamma(0.1, 0.2)
+0.202...
+julia&gt; klucbGamma(0.5, 0.2)
+1.013...
+julia&gt; klucbGamma(0.9, 0.2)
+1.824...</code></pre><ul><li><p>Influence of d:</p></li></ul><pre><code class="language-julia">julia&gt; klucbGamma(0.1, 0.4)
+0.285...
+julia&gt; klucbGamma(0.1, 0.9)
+0.559...
 
-    julia&gt; klucbExp(0.9, 0.4)
-    2.572132...
-    julia&gt; klucbExp(0.9, 0.9)
-    5.031795...</code></pre></div><a class="source-link" target="_blank" href="https://github.com/Naereen/Kullback-Leibler-divergences-and-kl-UCB-indexes/blob/6a58c67731a75090822d0fe16bfade506259cc82/julia-src/KullbackLeibler.jl#L581">source</a></section><section class="docstring"><div class="docstring-header"><a class="docstring-binding" id="KullbackLeibler.klucbGamma-Tuple{Any,Any,Any}" href="#KullbackLeibler.klucbGamma-Tuple{Any,Any,Any}"><code>KullbackLeibler.klucbGamma</code></a> — <span class="docstring-category">Method</span>.</div><div><pre><code class="language-none">function klucbGamma(x, d, precision=1e-6)</code></pre><p>KL-UCB index computation for Gamma distributions, using <code>klucb</code>.</p><ul><li><p>Influence of x:</p></li></ul><pre><code class="language-julia">    julia&gt; klucbGamma(0.1, 0.2)
-    0.202...
-    julia&gt; klucbGamma(0.5, 0.2)
-    1.013...
-    julia&gt; klucbGamma(0.9, 0.2)
-    1.824...</code></pre><ul><li><p>Influence of d:</p></li></ul><pre><code class="language-julia">    julia&gt; klucbGamma(0.1, 0.4)
-    0.285...
-    julia&gt; klucbGamma(0.1, 0.9)
-    0.559...
+julia&gt; klucbGamma(0.5, 0.4)
+1.428...
+julia&gt; klucbGamma(0.5, 0.9)
+2.795...
 
-    julia&gt; klucbGamma(0.5, 0.4)
-    1.428...
-    julia&gt; klucbGamma(0.5, 0.9)
-    2.795...
-
-    julia&gt; klucbGamma(0.9, 0.4)
-    2.572...
-    julia&gt; klucbGamma(0.9, 0.9)
-    5.031...</code></pre></div><a class="source-link" target="_blank" href="https://github.com/Naereen/Kullback-Leibler-divergences-and-kl-UCB-indexes/blob/6a58c67731a75090822d0fe16bfade506259cc82/julia-src/KullbackLeibler.jl#L634">source</a></section><h2><a class="nav-anchor" id="Index-1" href="#Index-1">Index</a></h2><ul><li><a href="index.html#KullbackLeibler.klBern-Tuple{Any,Any}"><code>KullbackLeibler.klBern</code></a></li><li><a href="index.html#KullbackLeibler.klBin-Tuple{Any,Any,Any}"><code>KullbackLeibler.klBin</code></a></li><li><a href="index.html#KullbackLeibler.klExp-Tuple{Any,Any}"><code>KullbackLeibler.klExp</code></a></li><li><a href="index.html#KullbackLeibler.klGamma-Tuple{Any,Any,Any}"><code>KullbackLeibler.klGamma</code></a></li><li><a href="index.html#KullbackLeibler.klGauss-NTuple{4,Any}"><code>KullbackLeibler.klGauss</code></a></li><li><a href="index.html#KullbackLeibler.klNegBin-Tuple{Any,Any,Any}"><code>KullbackLeibler.klNegBin</code></a></li><li><a href="index.html#KullbackLeibler.klPoisson-Tuple{Any,Any}"><code>KullbackLeibler.klPoisson</code></a></li><li><a href="index.html#KullbackLeibler.klucb-NTuple{7,Any}"><code>KullbackLeibler.klucb</code></a></li><li><a href="index.html#KullbackLeibler.klucbBern-Tuple{Any,Any,Any}"><code>KullbackLeibler.klucbBern</code></a></li><li><a href="index.html#KullbackLeibler.klucbExp-Tuple{Any,Any,Any}"><code>KullbackLeibler.klucbExp</code></a></li><li><a href="index.html#KullbackLeibler.klucbGamma-Tuple{Any,Any,Any}"><code>KullbackLeibler.klucbGamma</code></a></li><li><a href="index.html#KullbackLeibler.klucbGauss-NTuple{4,Any}"><code>KullbackLeibler.klucbGauss</code></a></li><li><a href="index.html#KullbackLeibler.klucbPoisson-Tuple{Any,Any,Any}"><code>KullbackLeibler.klucbPoisson</code></a></li></ul><footer><hr/></footer></article></body></html>
+julia&gt; klucbGamma(0.9, 0.4)
+2.572...
+julia&gt; klucbGamma(0.9, 0.9)
+5.031...</code></pre></div><a class="source-link" target="_blank" href="https://github.com/Naereen/Kullback-Leibler-divergences-and-kl-UCB-indexes/blob/2b027158f4a685355bf9d5d89884ab95e9c0fe1a/julia-src/KullbackLeibler.jl#L766">source</a></section><footer><hr/></footer></article></body></html>

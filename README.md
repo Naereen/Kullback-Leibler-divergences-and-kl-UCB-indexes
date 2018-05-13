@@ -23,19 +23,17 @@ There is also a [Julia](http://julialang.org/) version, on [this repository](htt
 ### Simple usage
 If the [`kullback_leibler.py`](src/kullback_leibler.py) file is accessible in your PATH or in Python's path:
 
-FIXME include real values!
-
 ```python
 >>> import kullback_leibler
 >>> p = 0.5; q = 0.01
 >>> kullback_leibler.klBern(p, q)
-XXX
+1.614463...
 >>> kullback_leibler.klGauss(q, p)
-XXX
+0.480199...
 >>> kullback_leibler.klPoisson(q, p)
-XXX
+0.450879...
 >>> kullback_leibler.klExp(q, p)
-XXX
+2.932023...
 ```
 
 ### Vectorized version?
@@ -79,6 +77,7 @@ $ ipython
 ...
 >>> import kullback_leibler as kl
 >>> import kullback_leibler_numba as kl_n
+>>> import pyximport; _ = pyximport.install()
 >>> import kullback_leibler_cython as kl_cy
 >>> import kullback_leibler_c as kl_c
 >>> import numpy as np; r = np.random.rand
@@ -86,34 +85,55 @@ $ ipython
 
 Then let's compare a single computation of a KL divergence, for instance of two Bernoulli distributions:
 
-FIXME include the real times
-
 ```python
 >>> %timeit (r(), r())   # don't neglect this "constant"!
+728 ns ± 34.7 ns per loop (mean ± std. dev. of 7 runs, 1000000 loops each)
 >>> %timeit kl.klBern(r(), r())
-132 ns ± 2.55 ns per loop (mean ± std. dev. of 7 runs, 10000000 loops each)
+2.42 µs ± 109 ns per loop (mean ± std. dev. of 7 runs, 100000 loops each)
+
 >>> %timeit kl_n.klBern(r(), r())
-132 ns ± 2.55 ns per loop (mean ± std. dev. of 7 runs, 10000000 loops each)
+1.26 µs ± 143 ns per loop (mean ± std. dev. of 7 runs, 1000000 loops each)
+>>> (2420 - 728) / (1260 - 728)  # compute speed-up factor
+3.18...
+
 >>> %timeit kl_cy.klBern(r(), r())
-132 ns ± 2.55 ns per loop (mean ± std. dev. of 7 runs, 10000000 loops each)
+933 ns ± 48.3 ns per loop (mean ± std. dev. of 7 runs, 1000000 loops each)
+>>> (2420 - 728) / (933 - 728)  # compute speed-up factor
+8.25
+
 >>> %timeit kl_c.klBern(r(), r())
-132 ns ± 2.55 ns per loop (mean ± std. dev. of 7 runs, 10000000 loops each)
+1.09 µs ± 127 ns per loop (mean ± std. dev. of 7 runs, 1000000 loops each)
+>>> (2420 - 728) / (1090 - 728)  # compute speed-up factor
+4.67
 ```
+
+> This shows that the Numba version is about 3 times faster than the naive Python version, the Cython version is the fastest with a speed-up of about 8 and the C version is about 5 times faster.
 
 And for kl-UCB indexes, for instance:
 
 ```python
+>>> %timeit (r(), r())   # don't neglect this "constant"!
+743 ns ± 37.9 ns per loop (mean ± std. dev. of 7 runs, 1000000 loops each)
 >>> %timeit kl.klucbBern(r(), r())
-132 ns ± 2.55 ns per loop (mean ± std. dev. of 7 runs, 10000000 loops each)
+28.9 µs ± 154 ns per loop (mean ± std. dev. of 7 runs, 10000 loops each)
+
 >>> %timeit kl_n.klucbBern(r(), r())
-132 ns ± 2.55 ns per loop (mean ± std. dev. of 7 runs, 10000000 loops each)
+75.8 µs ± 1.44 µs per loop (mean ± std. dev. of 7 runs, 10000 loops each)
+>>> (28900 - 743) / (75800 - 743)
+0.375...
+
 >>> %timeit kl_cy.klucbBern(r(), r())
-132 ns ± 2.55 ns per loop (mean ± std. dev. of 7 runs, 10000000 loops each)
->>> %timeit kl_c.klucbBern(r(), r())
-132 ns ± 2.55 ns per loop (mean ± std. dev. of 7 runs, 10000000 loops each)
+3.65 µs ± 42.5 ns per loop (mean ± std. dev. of 7 runs, 100000 loops each)
+>>> (28900 - 743) / (3650 - 743)
+9.68...
+
+>>> %timeit kl_c.klucbBern(r(), r(), 1e-6)  # needs precision
+2.23 µs ± 21.6 ns per loop (mean ± std. dev. of 7 runs, 100000 loops each)
+>>> (28900 - 743) / (2230 - 743)
+18.93...
 ```
 
-The speedup is typically between ×50 and ×100.
+> This shows that the Numba version is about 3 times *slower* than the naive Python version, the Cython version is about 10 times faster and the C version is the fastest with a speed-up of about 20.
 
 ## Demo on a [Jupyter notebook](https://www.Jupyter.org/)
 See this notebook: [on nbviewever](https://nbviewer.jupyter.org/github/Naereen/Kullback-Leibler-divergences-and-kl-UCB-indexes/blob/master/Kullback-Leibler_divergences_in_native_Python__Cython_and_Numba.ipynb), which also compares with the [Julia version](https://github.com/Naereen/KullbackLeibler.jl).
